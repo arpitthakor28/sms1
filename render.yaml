@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: gatesync-backend
+    name: sms1-backend
     env: docker
     dockerfilePath: Dockerfile
     dockerContext: .
