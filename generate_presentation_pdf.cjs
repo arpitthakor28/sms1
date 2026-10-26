@@ -2,7 +2,7 @@ const PDFDocument = require('pdfkit');
 const fs = require('fs');
 const path = require('path');
 
-function createHumanExecutivePresentationPDF() {
+function createPresentationPDF() {
   const doc = new PDFDocument({
     size: [960, 540], // 16:9 Widescreen
     margins: { top: 0, bottom: 0, left: 0, right: 0 },
@@ -13,206 +13,191 @@ function createHumanExecutivePresentationPDF() {
   const stream = fs.createWriteStream(outputPath);
   doc.pipe(stream);
 
-  // Clean, Human Executive Cold Palette (Light Theme with Corporate Navy & Royal Blue)
+  // Cold temperature color palette (Matching Second PPT)
   const C = {
-    bgLight: '#F8FAFC',       // Clean executive off-white
-    cardBg: '#FFFFFF',        // Pure white card
-    cardBorder: '#E2E8F0',    // Soft cool slate border
-    cardBorderDark: '#CBD5E1',// Crisp accent border
-    primaryNavy: '#0F2942',   // Deep authoritative navy
-    royalBlue: '#1E40AF',     // Professional academic blue
-    accentBlue: '#0284C7',    // Tech blue accent
-    textDark: '#0F172A',      // High-contrast charcoal headings
-    textBody: '#334155',      // Clean readable slate body
-    textMuted: '#64748B',     // Cool slate metadata
-    alertRed: '#DC2626',      // Corporate red
-    successGreen: '#16A34A',  // Corporate green
-    headerDivider: '#E2E8F0'  // Clean header line
+    bgDark: '#0B132B',       // Deepest slate navy
+    bgCard: '#162238',       // Cold card background
+    bgCardBorder: '#243656', // Crisp slate outline
+    accentCyan: '#38BDF8',   // Icy cyan highlight
+    accentBlue: '#0284C7',   // Cold sky blue
+    accentEmerald: '#10B981',// Mint confirmation
+    accentPurple: '#A855F7', // Royal purple accent
+    accentRed: '#EF4444',    // Danger / Problem red
+    textWhite: '#FFFFFF',    // Pure white
+    textLight: '#CBD5E1',    // Cool silver text
+    textMuted: '#94A3B8',    // Muted slate gray
   };
 
-  // Header and Footer for standard content slides
-  function applyHeaderFooter(sectionNum, category, title, subtitle, slideNum) {
+  // Helper for slide common header and footer
+  function applyHeaderFooter(category, title, subtitle, slideNum) {
     doc.addPage({ size: [960, 540], margins: { top: 0, bottom: 0, left: 0, right: 0 } });
 
-    // Background
-    doc.rect(0, 0, 960, 540).fill(C.bgLight);
+    // Solid background
+    doc.rect(0, 0, 960, 540).fill(C.bgDark);
 
-    // Top Blue Accent Line
-    doc.rect(0, 0, 960, 4).fill(C.royalBlue);
+    // Top icy accent bar
+    doc.rect(0, 0, 960, 5).fill(C.accentBlue);
 
-    // Section Tag - Clean Human Typography (No awkward rounded pill outline!)
+    // Category / Tag
     doc.font('Helvetica-Bold')
-       .fontSize(8.5)
-       .fillColor(C.royalBlue)
-       .text(`${sectionNum.toUpperCase()}  |  ${category.toUpperCase()}`, 50, 24);
+       .fontSize(10)
+       .fillColor(C.accentCyan)
+       .text(category.toUpperCase(), 50, 32, { width: 860 });
 
     // Slide Title
     doc.font('Helvetica-Bold')
-       .fontSize(19)
-       .fillColor(C.primaryNavy)
-       .text(title, 50, 44, { width: 860 });
+       .fontSize(21)
+       .fillColor(C.textWhite)
+       .text(title, 50, 48, { width: 860 });
 
-    // Subtitle
+    // Slide Subtitle
     if (subtitle) {
       doc.font('Helvetica')
-         .fontSize(9.5)
+         .fontSize(10.5)
          .fillColor(C.textMuted)
-         .text(subtitle, 50, 68, { width: 860 });
+         .text(subtitle, 50, 76, { width: 860 });
     }
 
-    // Header divider line
-    doc.strokeColor(C.headerDivider)
+    // Bottom footer line
+    doc.strokeColor(C.bgCardBorder)
        .lineWidth(1)
-       .moveTo(50, 90)
-       .lineTo(910, 90)
-       .stroke();
-
-    // Footer divider line
-    doc.strokeColor(C.headerDivider)
-       .lineWidth(1)
-       .moveTo(50, 506)
-       .lineTo(910, 506)
+       .moveTo(50, 505)
+       .lineTo(910, 505)
        .stroke();
 
     // Footer Text Left
     doc.font('Helvetica')
-       .fontSize(8.5)
+       .fontSize(9)
        .fillColor(C.textMuted)
-       .text('GateSync — Smart Society Security System  |  Arpitsinh Thakor (23SE02IE040)', 50, 515);
+       .text('GATESYNC • Smart Residential Security Platform  |  Arpitsinh Thakor (23SE02IE040)', 50, 514);
 
     // Footer Text Right
     doc.font('Helvetica-Bold')
-       .fontSize(8.5)
-       .fillColor(C.royalBlue)
-       .text(`SCHOOL OF ENGINEERING  •  SLIDE ${slideNum} / 12`, 50, 515, { width: 860, align: 'right' });
+       .fontSize(9)
+       .fillColor(C.accentCyan)
+       .text(`SCHOOL OF ENGINEERING  •  SLIDE ${slideNum} / 12`, 50, 514, { width: 860, align: 'right' });
   }
 
   // ==========================================
-  // SLIDE 1: COVER SLIDE (HUMAN EXECUTIVE DESIGN)
+  // SLIDE 1: COVER SLIDE
   // ==========================================
   {
     doc.addPage({ size: [960, 540], margins: { top: 0, bottom: 0, left: 0, right: 0 } });
-    doc.rect(0, 0, 960, 540).fill(C.bgLight);
+    doc.rect(0, 0, 960, 540).fill(C.bgDark);
 
-    // Top Royal Blue Accent Bar
-    doc.rect(0, 0, 960, 6).fill(C.royalBlue);
+    // Decorative icy accent line
+    doc.rect(0, 0, 960, 8).fill(C.accentCyan);
 
-    // University Header Line (Clean text with accent marker)
-    doc.rect(60, 36, 4, 18).fill(C.royalBlue);
+    // Institution Badge
+    doc.roundedRect(60, 42, 480, 32, 6)
+       .fillAndStroke(C.bgCard, C.bgCardBorder);
     doc.font('Helvetica-Bold')
-       .fontSize(11)
-       .fillColor(C.primaryNavy)
-       .text('P. P. SAVANI UNIVERSITY  •  SCHOOL OF ENGINEERING', 72, 40);
+       .fontSize(10)
+       .fillColor(C.accentCyan)
+       .text('P. P. SAVANI UNIVERSITY • SCHOOL OF ENGINEERING', 75, 52);
 
-    // University Logo (Top Right)
+    // University Logo
     const logoPath = path.resolve('screenshots/ppsu_logo.png');
     if (fs.existsSync(logoPath)) {
-      doc.image(logoPath, 750, 30, { width: 150, fit: [150, 65] });
+      doc.image(logoPath, 760, 36, { width: 140, fit: [140, 70] });
     }
 
-    // Main Project Title
+    // Main Title: GATESYNC
     doc.font('Helvetica-Bold')
-       .fontSize(42)
-       .fillColor(C.primaryNavy)
-       .text('GATESYNC', 60, 84);
+       .fontSize(48)
+       .fillColor(C.textWhite)
+       .text('GATESYNC', 60, 96, { characterSpacing: 2 });
 
     // Subtitle
     doc.font('Helvetica-Bold')
        .fontSize(15)
-       .fillColor(C.royalBlue)
-       .text('Smart Residential Society Security & Visitor Management System', 60, 138);
+       .fillColor(C.accentCyan)
+       .text('Smart Gated Community Security & Real-Time Visitor Management Platform', 60, 156);
 
-    // Abstract Summary
+    // Brief Overview paragraph
     doc.font('Helvetica')
-       .fontSize(10.5)
-       .fillColor(C.textBody)
-       .text('A full-stack Progressive Web Application (PWA) built to modernize gated community security operations. Replaces manual paper registers with real-time mobile push notifications for residents, 1-tap courier clearance, pre-approved digital QR guest passes, and society maintenance accounting.', 60, 168, { width: 840, lineGap: 3.5 });
+       .fontSize(11)
+       .fillColor(C.textLight)
+       .text('An enterprise-grade, offline-first Progressive Web Application (PWA) replacing legacy paper visitor registers with sub-150ms bidirectional STOMP WebSocket gatekeeper alerts, 1-tap logistics clearance, and cryptographic guest access.', 60, 188, { width: 840, lineGap: 4 });
 
-    // Candidate Credentials Container Card (Clean white card with subtle cold border)
-    doc.roundedRect(60, 238, 840, 235, 6)
-       .lineWidth(1)
-       .fillAndStroke(C.cardBg, C.cardBorder);
+    // Student Information Card
+    doc.roundedRect(60, 252, 840, 218, 8)
+       .lineWidth(1.5)
+       .fillAndStroke(C.bgCard, C.accentBlue);
 
-    // Deep Navy accent stripe on left of card
-    doc.rect(60, 238, 5, 235).fill(C.primaryNavy);
+    // Inner Card Content: Left Column
+    doc.font('Helvetica-Bold').fontSize(9.5).fillColor(C.accentCyan).text('DEVELOPED & PRESENTED BY:', 85, 272);
+    doc.font('Helvetica-Bold').fontSize(16).fillColor(C.textWhite).text('ARPITSINH THAKOR', 85, 288);
 
-    // Left Column: Student Credentials
-    doc.font('Helvetica-Bold').fontSize(8.5).fillColor(C.textMuted).text('STUDENT DEVELOPER', 85, 258);
-    doc.font('Helvetica-Bold').fontSize(16).fillColor(C.textDark).text('ARPITSINH THAKOR', 85, 274);
+    doc.font('Helvetica-Bold').fontSize(9.5).fillColor(C.accentCyan).text('ENROLLMENT NUMBER:', 85, 324);
+    doc.font('Helvetica-Bold').fontSize(14).fillColor(C.textWhite).text('23SE02IE040', 85, 340);
 
-    doc.font('Helvetica-Bold').fontSize(8.5).fillColor(C.textMuted).text('ENROLLMENT NUMBER', 85, 312);
-    doc.font('Helvetica-Bold').fontSize(14).fillColor(C.royalBlue).text('23SE02IE040', 85, 328);
+    doc.font('Helvetica-Bold').fontSize(9.5).fillColor(C.accentCyan).text('ACADEMIC PROGRAM:', 85, 376);
+    doc.font('Helvetica-Bold').fontSize(11.5).fillColor(C.textWhite).text('B.Tech in Information Technology & Engineering', 85, 392);
+    doc.font('Helvetica').fontSize(10.5).fillColor(C.textLight).text('School of Engineering', 85, 410);
 
-    doc.font('Helvetica-Bold').fontSize(8.5).fillColor(C.textMuted).text('DEGREE & BRANCH', 85, 366);
-    doc.font('Helvetica-Bold').fontSize(12).fillColor(C.textDark).text('B.Tech in Information Technology & Engineering', 85, 382);
+    doc.font('Helvetica-Bold').fontSize(9.5).fillColor(C.accentCyan).text('TECHNOLOGY FOCUS:', 85, 432);
+    doc.font('Helvetica-Bold').fontSize(11).fillColor(C.accentEmerald).text('Full Stack Development - Java', 85, 446);
 
-    doc.font('Helvetica-Bold').fontSize(8.5).fillColor(C.textMuted).text('DEPARTMENT', 85, 414);
-    doc.font('Helvetica').fontSize(11).fillColor(C.textBody).text('School of Engineering', 85, 430);
+    // Inner Card Content: Right Column
+    doc.font('Helvetica-Bold').fontSize(9.5).fillColor(C.accentCyan).text('ACADEMIC INSTITUTION:', 520, 272);
+    doc.font('Helvetica-Bold').fontSize(13).fillColor(C.textWhite).text('School of Engineering', 520, 288);
+    doc.font('Helvetica').fontSize(10.5).fillColor(C.textLight).text('P. P. Savani University, Surat, Gujarat, India', 520, 306);
 
-    // Right Column: Institution & Technology Focus
-    doc.font('Helvetica-Bold').fontSize(8.5).fillColor(C.textMuted).text('INSTITUTION', 520, 258);
-    doc.font('Helvetica-Bold').fontSize(13).fillColor(C.textDark).text('P. P. Savani University', 520, 274);
-    doc.font('Helvetica').fontSize(9.5).fillColor(C.textBody).text('NH 8, GETCO, Near Bilitha, Dhamdod, Kosamba, Gujarat 394125', 520, 292, { width: 350 });
+    doc.font('Helvetica-Bold').fontSize(9.5).fillColor(C.accentCyan).text('PROJECT CATEGORY:', 520, 342);
+    doc.font('Helvetica-Bold').fontSize(13).fillColor(C.textWhite).text('Final Year Project', 520, 358);
 
-    doc.font('Helvetica-Bold').fontSize(8.5).fillColor(C.textMuted).text('PROJECT PRESENTATION', 520, 328);
-    doc.font('Helvetica-Bold').fontSize(12).fillColor(C.textDark).text('Major Engineering Project Presentation', 520, 344);
-    doc.font('Helvetica').fontSize(10).fillColor(C.textBody).text('Academic Year 2025–2026', 520, 362);
+    doc.font('Helvetica-Bold').fontSize(9.5).fillColor(C.accentCyan).text('ACADEMIC YEAR:', 520, 394);
+    doc.font('Helvetica-Bold').fontSize(13).fillColor(C.accentCyan).text('Academic Year 2026–2027', 520, 410);
+    doc.font('Helvetica').fontSize(10).fillColor(C.textMuted).text('Major Project Presentation (AY 2026–2027)', 520, 430);
 
-    doc.font('Helvetica-Bold').fontSize(8.5).fillColor(C.textMuted).text('TECHNOLOGY FOCUS', 520, 396);
-    doc.font('Helvetica-Bold').fontSize(13).fillColor(C.royalBlue).text('Full Stack Development - Java', 520, 412);
-    doc.font('Helvetica').fontSize(9.5).fillColor(C.textBody).text('Spring Boot 3 REST API & React PWA Cloud Architecture', 520, 430);
-
-    // Footer
+    // Bottom slide footer
     doc.font('Helvetica')
        .fontSize(8.5)
        .fillColor(C.textMuted)
-       .text('GateSync — Smart Society Security System  |  School of Engineering, PPSU', 60, 515);
+       .text('GateSync Production Platform  •  https://github.com/arpitthakor28/sms1', 60, 514);
   }
 
   // ==========================================
   // SLIDE 2: PROBLEM STATEMENT & MOTIVATION
   // ==========================================
   {
-    applyHeaderFooter('Section 01', 'Project Background', 'The Problem with Traditional Gate Security', 'Operational Vulnerabilities & Bottlenecks of Physical Paper Logbooks', 2);
+    applyHeaderFooter('01. Background & Challenges', 'Problem Statement & Motivation', 'Why Traditional Physical Gatehouse Registers Fail in Modern Residential Societies', 2);
 
-    // Left Card: Paper Register Limitations
-    doc.roundedRect(50, 108, 415, 375, 6).lineWidth(1).fillAndStroke(C.cardBg, C.cardBorder);
-    doc.rect(50, 108, 4, 375).fill(C.alertRed);
+    // Left Column: The Problem
+    doc.roundedRect(50, 110, 415, 370, 8).lineWidth(1.5).fillAndStroke(C.bgCard, C.accentRed);
+    doc.font('Helvetica-Bold').fontSize(11).fillColor('#F87171').text('CRITICAL LIMITATIONS OF PAPER LOGBOOKS', 70, 128);
 
-    doc.font('Helvetica-Bold').fontSize(11).fillColor(C.alertRed).text('TRADITIONAL PAPER REGISTER LIMITATIONS', 70, 126);
-
-    const manualIssues = [
-      { t: 'Long Gate Queues at Peak Hours', d: 'Guards manually record visitor names, phone numbers, and flat numbers in physical registers. Each entry takes 2–4 minutes, creating severe vehicle and pedestrian gate bottlenecks.' },
-      { t: 'Zero Privacy for Residents & Phone Leakage', d: 'The open physical logbook sits on the guard desk. Any delivery boy or visitor can read, copy, or photograph resident contact numbers and private flat details.' },
-      { t: 'Unanswered Intercoms & Missed Verification Calls', d: 'Guards repeatedly attempt to reach residents via intercom or cellular calls. When residents are busy or away, guards either let visitors in unverified or strand guests outside.' },
-      { t: 'Overwhelming Courier Delivery Volumes', d: 'Daily e-commerce couriers (Swiggy, Zomato, Amazon, Blinkit) create excessive manual documentation overhead for guards handling repetitive entries.' }
+    const problems = [
+      { t: 'Severe Gate Queue Bottlenecks', d: 'Manual pen-and-paper logging consumes 3–5 minutes per entering vehicle, causing long congestion queues at society entry gates.' },
+      { t: 'Privacy Vulnerabilities', d: 'Visitors write personal phone numbers and visiting flat numbers in an open book, easily viewed and photographed by any third party.' },
+      { t: 'Unreliable Resident Verification', d: 'Guards must phone or intercom residents. Unanswered calls often lead to guards waving visitors in unverified.' },
+      { t: 'E-Commerce Courier Overload', d: 'Modern high-frequency logistics (Swiggy, Zomato, Amazon, Blinkit) overwhelm gatekeepers with constant repetitive manual logging.' }
     ];
 
-    let mY = 156;
-    manualIssues.forEach(item => {
-      doc.font('Helvetica-Bold').fontSize(10).fillColor(C.textDark).text(`•  ${item.t}`, 70, mY);
-      doc.font('Helvetica').fontSize(9).fillColor(C.textBody).text(item.d, 82, mY + 14, { width: 360, lineGap: 2.5 });
-      mY += 72;
+    let pY = 160;
+    problems.forEach(p => {
+      doc.font('Helvetica-Bold').fontSize(10.5).fillColor(C.textWhite).text(`• ${p.t}:`, 70, pY);
+      doc.font('Helvetica').fontSize(9.5).fillColor(C.textLight).text(p.d, 70, pY + 14, { width: 375, lineGap: 3 });
+      pY += 72;
     });
 
-    // Right Card: The GateSync Solution
-    doc.roundedRect(495, 108, 415, 375, 6).lineWidth(1).fillAndStroke(C.cardBg, C.cardBorder);
-    doc.rect(495, 108, 4, 375).fill(C.successGreen);
+    // Right Column: The Solution
+    doc.roundedRect(495, 110, 415, 370, 8).lineWidth(1.5).fillAndStroke(C.bgCard, C.accentCyan);
+    doc.font('Helvetica-Bold').fontSize(11).fillColor(C.accentCyan).text('THE GATESYNC DIGITAL TRANSFORMATION', 515, 128);
 
-    doc.font('Helvetica-Bold').fontSize(11).fillColor(C.successGreen).text('THE GATESYNC DIGITAL SOLUTION', 515, 126);
-
-    const gatesyncSolutions = [
-      { t: 'Instant Smartphone Push Alerts (< 150ms)', d: 'When a visitor arrives, the guard submits details in under 10 seconds. An immediate pop-up notification appears on the resident phone with visitor details and photo.' },
-      { t: '1-Tap Resident Remote Approvals', d: 'Residents approve or deny entry with a single tap from anywhere (at home, work, or travelling) with zero voice calls required.' },
-      { t: 'Pre-Approved Guest Passes with Digital QR', d: 'Residents generate digital gate passes beforehand for expected guests. Visitors display their QR code or 6-digit OTP for 2-second fast clearance.' },
-      { t: '1-Tap Delivery Clearance for Verified Couriers', d: 'One-click quick delivery intake buttons for Amazon, Flipkart, Swiggy, and Zomato streamline high-frequency courier entries without manual typing.' }
+    const solutions = [
+      { t: 'Sub-150ms Instant Push Alerting', d: 'Bidirectional STOMP WebSockets push arrival alerts straight to the resident mobile screen before the visitor reaches the barrier.' },
+      { t: '1-Tap Resident Remote Approvals', d: 'Residents verify visitor identity with arrival photo and tap Approve or Deny from anywhere in the world.' },
+      { t: 'Pre-Approved QR & 6-Digit Passes', d: 'Residents generate digital passes in advance for expected guests. Guards verify in 2 seconds via optical camera QR scanning.' },
+      { t: '1-Tap Logistics Partner Clearing', d: 'Dedicated 1-tap fast ingress for Swiggy, Zomato, Amazon, and Blinkit completely eliminates typing bottlenecks.' }
     ];
 
-    let gY = 156;
-    gatesyncSolutions.forEach(item => {
-      doc.font('Helvetica-Bold').fontSize(10).fillColor(C.textDark).text(`•  ${item.t}`, 515, gY);
-      doc.font('Helvetica').fontSize(9).fillColor(C.textBody).text(item.d, 527, gY + 14, { width: 360, lineGap: 2.5 });
-      gY += 72;
+    let sY = 160;
+    solutions.forEach(s => {
+      doc.font('Helvetica-Bold').fontSize(10.5).fillColor(C.textWhite).text(`• ${s.t}:`, 515, sY);
+      doc.font('Helvetica').fontSize(9.5).fillColor(C.textLight).text(s.d, 515, sY + 14, { width: 375, lineGap: 3 });
+      sY += 72;
     });
   }
 
@@ -220,513 +205,311 @@ function createHumanExecutivePresentationPDF() {
   // SLIDE 3: SYSTEM ARCHITECTURE & TECH STACK
   // ==========================================
   {
-    applyHeaderFooter('Section 02', 'Technical Architecture', 'Full Stack System Architecture', 'Decoupled 3-Tier Enterprise Architecture (Client, Service, Database)', 3);
+    applyHeaderFooter('02. Engineering Architecture', 'Full-Stack Architecture & Technology Stack', 'Robust Multi-Tier Cloud Architecture Built for Real-Time Responsiveness and Zero Data Loss', 3);
 
     const tiers = [
-      {
-        title: 'FRONTEND CLIENT',
-        tech: 'React 19 PWA & Vite',
-        color: C.royalBlue,
-        x: 50,
-        items: [
-          { h: 'Progressive Web App (PWA)', d: 'Installable on mobile smartphones and desktop cabin PCs; works offline via Service Workers.' },
-          { h: 'WebSocket STOMP Client', d: 'Maintains low-latency bidirectional socket connection for instant visitor push alerts.' },
-          { h: 'Responsive UI Design', d: 'Modern executive UI tailored for guard touchscreens, resident phones, and admin portals.' },
-          { h: 'Camera & QR Scanner', d: 'Integrated WebRTC camera module for visitor snapshots and guest pass barcode verification.' }
-        ]
-      },
-      {
-        title: 'BACKEND CORE',
-        tech: 'Spring Boot 3 (Java 21)',
-        color: C.primaryNavy,
-        x: 350,
-        items: [
-          { h: 'RESTful Microservice API', d: 'High-throughput stateless API controllers handling visitor logs, residents, and billing records.' },
-          { h: 'WebSocket Message Broker', d: 'In-memory message broker routing real-time approval events directly to resident user queues.' },
-          { h: 'Spring Security & JWT', d: 'Role-based access control (RBAC) securing endpoints with 12-round BCrypt password hashing.' },
-          { h: 'Scheduled Keep-Alive', d: 'Integrated `/api/health` monitoring endpoint preventing cloud container idle sleep.' }
-        ]
-      },
-      {
-        title: 'DATA & DEPLOYMENT',
-        tech: 'Cloud Infrastructure',
-        color: C.successGreen,
-        x: 650,
-        items: [
-          { h: 'Database Persistence', d: 'MongoDB Atlas & PostgreSQL relational mapping for visitor history, user profiles, and accounts.' },
-          { h: 'Docker Containerization', d: 'Multi-stage Maven + Eclipse Temurin 21 JRE container image hosted on Render Cloud.' },
-          { h: 'Static Frontend CDN', d: 'Vite production build deployed on GitHub Pages with automated continuous deployment.' },
-          { h: 'Automated Nap Stopper', d: 'Cron uptime monitor pinging backend health endpoint every 10 minutes for 99.8% uptime.' }
-        ]
-      }
+      { name: 'CLIENT PRESENTATION TIER (PWA)', col: C.accentCyan, tech: 'React 19 • Vite • Lucide Icons • STOMP over SockJS • Service Worker Precaching', desc: 'Installable Progressive Web App (PWA) with responsive layouts, offline transaction queue, and audible chime notifications.' },
+      { name: 'BACKEND MICROSERVICE CORE (JAVA)', col: C.accentBlue, tech: 'Java 21 LTS • Spring Boot 3.3.4 • Spring Security 6 • JJWT • RESTful APIs', desc: 'Stateless multi-tenant controllers, WebSocket message broker (/topic and /user/queue), and atomic concurrency locks.' },
+      { name: 'DUAL-DATABASE PERSISTENCE STRATEGY', col: C.accentEmerald, tech: 'MongoDB Atlas Cloud (Distributed NoSQL) + Relational Enterprise Mapping', desc: 'MongoDB Atlas stores high-throughput notifications, pre-approved passes, and audit trails; robust relational schemas for billing.' },
+      { name: 'CLOUD DEPLOYMENT & CI/CD INFRASTRUCTURE', col: C.accentPurple, tech: 'Render Cloud (Dockerized Spring Boot Container) + GitHub Pages (Production PWA)', desc: 'Fully automated continuous deployment with sub-second health monitors (/api/health) and automated failovers.' }
     ];
 
-    tiers.forEach(tier => {
-      doc.roundedRect(tier.x, 108, 260, 375, 6).lineWidth(1).fillAndStroke(C.cardBg, C.cardBorder);
-      doc.rect(tier.x, 108, 260, 4).fill(tier.color);
+    let tY = 110;
+    tiers.forEach(t => {
+      doc.roundedRect(50, tY, 530, 84, 6).lineWidth(1).fillAndStroke(C.bgCard, C.bgCardBorder);
+      doc.font('Helvetica-Bold').fontSize(9.5).fillColor(t.col).text(t.name, 65, tY + 10);
+      doc.font('Helvetica-Bold').fontSize(10.5).fillColor(C.textWhite).text(t.tech, 65, tY + 26);
+      doc.font('Helvetica').fontSize(9).fillColor(C.textLight).text(t.desc, 65, tY + 44, { width: 500, lineGap: 2 });
+      tY += 94;
+    });
 
-      doc.font('Helvetica-Bold').fontSize(11).fillColor(tier.color).text(tier.title, tier.x + 20, 126);
-      doc.font('Helvetica-Bold').fontSize(13).fillColor(C.textDark).text(tier.tech, tier.x + 20, 142);
+    // Right Column: Key Architectural Benchmarks Box
+    doc.roundedRect(600, 110, 310, 370, 8).lineWidth(1.5).fillAndStroke(C.bgCard, C.accentCyan);
+    doc.font('Helvetica-Bold').fontSize(11).fillColor(C.accentCyan).text('ARCHITECTURAL BENCHMARKS', 620, 128);
 
-      let tY = 172;
-      tier.items.forEach(it => {
-        doc.font('Helvetica-Bold').fontSize(9.5).fillColor(C.primaryNavy).text(`•  ${it.h}`, tier.x + 20, tY);
-        doc.font('Helvetica').fontSize(8.5).fillColor(C.textBody).text(it.d, tier.x + 30, tY + 13, { width: 210, lineGap: 2 });
-        tY += 66;
-      });
+    const benchmarks = [
+      { stat: '< 150 ms', desc: 'STOMP WebSocket Alert Latency' },
+      { stat: '100 %', desc: 'Tenant Isolation per Society' },
+      { stat: 'Zero Trust', desc: '15-min Rotating JWT Access Tokens' },
+      { stat: 'Offline First', desc: 'Auto-syncing LocalStorage Queue' }
+    ];
+
+    let bY = 165;
+    benchmarks.forEach(b => {
+      doc.font('Helvetica-Bold').fontSize(22).fillColor(C.textWhite).text(b.stat, 620, bY);
+      doc.font('Helvetica').fontSize(10).fillColor(C.textLight).text(b.desc, 620, bY + 28);
+      bY += 75;
     });
   }
 
-  // ==========================================
-  // SLIDE 4: USER ROLES & OPERATIONAL WORKFLOWS
-  // ==========================================
-  {
-    applyHeaderFooter('Section 03', 'Operational Model', 'User Roles & Operational Workflows', 'Three Distinct Permission Levels Ensuring Security, Convenience, and Oversight', 4);
+  // Helper function for Screenshot slides
+  function addScreenshotSlide(cat, title, sub, bullets, imgName, slideNum) {
+    applyHeaderFooter(cat, title, sub, slideNum);
 
-    const roles = [
-      {
-        role: 'SECURITY GUARD CABIN',
-        badge: 'GATE ENTRANCE DESK',
-        color: C.royalBlue,
-        x: 50,
-        desc: 'Frontline physical checkpoint software designed for rapid data entry with minimal typing.',
-        duties: [
-          'Register unexpected visitors in under 10 seconds.',
-          'One-click quick delivery intake for courier services.',
-          'Verify pre-approved guest QR passes with device camera.',
-          'Track live visitor queue and log vehicle registration.'
-        ]
-      },
-      {
-        role: 'RESIDENT PORTAL',
-        badge: 'SMARTPHONE PWA',
-        color: C.primaryNavy,
-        x: 350,
-        desc: 'Personal resident portal granting flat owners complete control over gate admissions.',
-        duties: [
-          'Receive instant real-time pop-up alerts on visitor arrival.',
-          '1-Tap Approve or Deny visitor gate access remotely.',
-          'Generate pre-approved digital QR passes for guests & family.',
-          'View flat visitor logs and manage authorized vehicles.'
-        ]
-      },
-      {
-        role: 'SOCIETY MANAGEMENT',
-        badge: 'ADMIN COMMAND CENTER',
-        color: C.successGreen,
-        x: 650,
-        desc: 'Centralized administration dashboard for committee members and facility supervisors.',
-        duties: [
-          'Oversee real-time visitor logs and complete entry audits.',
-          'Manage society member directory, flats, and tenant status.',
-          'Generate and track society maintenance fee collections.',
-          'Publish emergency alerts and community announcements.'
-        ]
-      }
-    ];
+    // Left Column: Text & Features
+    doc.roundedRect(50, 110, 420, 370, 8).lineWidth(1).fillAndStroke(C.bgCard, C.bgCardBorder);
+    doc.font('Helvetica-Bold').fontSize(11).fillColor(C.accentCyan).text('CORE FUNCTIONALITY & WORKFLOW', 70, 128);
 
-    roles.forEach(r => {
-      doc.roundedRect(r.x, 108, 260, 375, 6).lineWidth(1).fillAndStroke(C.cardBg, C.cardBorder);
-      doc.rect(r.x, 108, 260, 4).fill(r.color);
-
-      doc.font('Helvetica-Bold').fontSize(10.5).fillColor(r.color).text(r.badge, r.x + 18, 126);
-      doc.font('Helvetica-Bold').fontSize(13).fillColor(C.textDark).text(r.role, r.x + 18, 142);
-
-      doc.font('Helvetica').fontSize(9).fillColor(C.textMuted).text(r.desc, r.x + 18, 166, { width: 224, lineGap: 2 });
-
-      doc.strokeColor(C.cardBorder).lineWidth(1).moveTo(r.x + 18, 216).lineTo(r.x + 242, 216).stroke();
-
-      doc.font('Helvetica-Bold').fontSize(9.5).fillColor(C.textDark).text('KEY WORKFLOW RESPONSIBILITIES:', r.x + 18, 228);
-
-      let dY = 250;
-      r.duties.forEach(d => {
-        doc.font('Helvetica-Bold').fontSize(9.5).fillColor(r.color).text('✓', r.x + 18, dY);
-        doc.font('Helvetica').fontSize(9).fillColor(C.textBody).text(d, r.x + 32, dY, { width: 210, lineGap: 2 });
-        dY += 56;
-      });
-    });
-  }
-
-  // ==========================================
-  // SLIDE 5: GUARD DESK & VISITOR INTAKE
-  // ==========================================
-  {
-    applyHeaderFooter('Section 04', 'Module Deep-Dive', 'Security Guard Cabin Desk & Quick Entry', 'High-Speed Visitor Intake Flow Engineered for Zero Gate Congestion', 5);
-
-    // Left Column: Feature Specifications
-    doc.roundedRect(50, 108, 380, 375, 6).lineWidth(1).fillAndStroke(C.cardBg, C.cardBorder);
-    doc.rect(50, 108, 4, 375).fill(C.royalBlue);
-
-    doc.font('Helvetica-Bold').fontSize(11).fillColor(C.royalBlue).text('KEY GUARD DESK CAPABILITIES', 70, 126);
-
-    const guardFeatures = [
-      { t: 'Sub-10 Second Visitor Intake', d: 'Smart dropdowns for Building Block and Flat numbers auto-populate resident details, minimizing guard typing.' },
-      { t: 'One-Tap Courier Buttons', d: 'Pre-configured buttons for Amazon, Flipkart, Swiggy, and Zomato instantly clear verified couriers without manual log overhead.' },
-      { t: 'Live Status Queue Synchronization', d: 'Visual color-coded badges (Pending: Amber, Approved: Green, Denied: Red) update instantly via WebSockets as residents respond.' },
-      { t: 'Visitor Photo & Vehicle Capture', d: 'WebRTC camera integration allows guards to attach a live visitor face snapshot and record vehicle registration numbers.' }
-    ];
-
-    let fY = 156;
-    guardFeatures.forEach(item => {
-      doc.font('Helvetica-Bold').fontSize(10).fillColor(C.textDark).text(`•  ${item.t}`, 70, fY);
-      doc.font('Helvetica').fontSize(9).fillColor(C.textBody).text(item.d, 82, fY + 14, { width: 330, lineGap: 2.5 });
-      fY += 72;
+    let bY = 160;
+    bullets.forEach(b => {
+      doc.font('Helvetica-Bold').fontSize(10.5).fillColor(C.textWhite).text(`• ${b.h}:`, 70, bY);
+      doc.font('Helvetica').fontSize(9.5).fillColor(C.textLight).text(b.d, 70, bY + 14, { width: 380, lineGap: 3 });
+      bY += 70;
     });
 
-    // Right Column: Realistic Application Screenshot
-    doc.roundedRect(450, 108, 460, 375, 6).lineWidth(1).fillAndStroke(C.cardBg, C.cardBorder);
-    doc.font('Helvetica-Bold').fontSize(10).fillColor(C.primaryNavy).text('SYSTEM INTERFACE: GUARD DESK & VISITOR REGISTRY', 468, 126);
+    // Right Column: Framed Screenshot
+    doc.roundedRect(490, 110, 420, 370, 8).lineWidth(1.5).fillAndStroke(C.bgCard, C.accentBlue);
 
-    const imgPath = path.resolve('screenshots/fresh_3_guard_desk.png');
+    const imgPath = path.resolve('screenshots/' + imgName);
     if (fs.existsSync(imgPath)) {
-      doc.image(imgPath, 468, 148, { width: 424, fit: [424, 315] });
+      doc.image(imgPath, 500, 120, { width: 400, height: 350, fit: [400, 350], align: 'center', valign: 'center' });
     }
   }
 
   // ==========================================
-  // SLIDE 6: RESIDENT REAL-TIME ALERTS & 1-TAP APPROVAL
+  // SLIDE 4: ADMIN DASHBOARD
+  // ==========================================
+  addScreenshotSlide(
+    '03. Operational Command',
+    'Executive Admin Dashboard & Analytics',
+    'Comprehensive Centralized Command Center for Society Administrators & Committee Members',
+    [
+      { h: 'Real-Time Campus Metrics', d: 'Visual KPI cards monitoring registered residential units, active residents, on-duty security staff, and monthly billing totals.' },
+      { h: 'Live Gatehouse Traffic Feed', d: 'Streaming monitor of active gate entries, pending resident approvals, and recent checkouts with sub-second WebSocket synchronization.' },
+      { h: 'Rapid Operational Shortcuts', d: '1-tap access to visitor registries, staff management, resident directory, maintenance ledger, and campus broadcast dispatches.' },
+      { h: 'Multi-Tenant Scoping', d: 'Strict role-based isolation guarantees that committee members only view statistics belonging to their society.' }
+    ],
+    'actual_gatesync_dashboard_dark.png',
+    4
+  );
+
+  // ==========================================
+  // SLIDE 5: GUARD DESK TERMINAL
+  // ==========================================
+  addScreenshotSlide(
+    '04. Gatehouse Operations',
+    'Guard Desk Terminal & Fast Visitor Ingress',
+    'Optimized High-Speed Interface Designed for Rapid Tablet and Gatehouse Terminal Input',
+    [
+      { h: 'Swift Data Capture', d: 'Guards register visitor full name, mobile number, target flat unit, vehicle plate, and visit category in under 15 seconds.' },
+      { h: 'Auto-Complete Resident Search', d: 'Instant dynamic lookup by flat number (e.g., A-101) or resident name eliminates manual telephone book lookups.' },
+      { h: 'Instant Push Notification Dispatch', d: 'Submitting entry automatically dispatches a real-time STOMP WebSocket notification to the resident smartphone.' },
+      { h: 'Live Entry Queue Feedback', d: 'Guards view real-time decision updates (Pending, Approved, Denied) directly on screen without leaving their post.' }
+    ],
+    'fresh_3_guard_desk.png',
+    5
+  );
+
+  // ==========================================
+  // SLIDE 6: RESIDENT LIVE ALERTING
+  // ==========================================
+  addScreenshotSlide(
+    '05. Resident Verification',
+    'Resident Real-Time Alert & 1-Tap Remote Approval',
+    'Instant Push Notification Modal Connecting Gate Arrival Directly to Resident Smartphone',
+    [
+      { h: 'Interactive Alert Modal', d: 'Instantaneous pop-up modal appears on resident device with an audible arrival chime the moment guard logs the visitor.' },
+      { h: 'Identity & Arrival Details', d: 'Presents visitor photo, full name, visit category, entry gate ID, and vehicle registration for complete transparency.' },
+      { h: '1-Tap Binary Decision', d: 'Resident taps Approve Entry (Green) to open the barrier or Deny Entry (Red) with optional reason sent back to the guard.' },
+      { h: 'Atomic Concurrency Guard', d: 'Server-side conflict protection (HTTP 409) prevents conflicting decisions if multiple family members open the alert.' }
+    ],
+    'fresh_fig_8_3_arrival_alert.png',
+    6
+  );
+
+  // ==========================================
+  // SLIDE 7: 1-TAP QUICK DELIVERY
+  // ==========================================
+  addScreenshotSlide(
+    '06. Logistics Ingress',
+    '1-Tap Fast Logistics & Delivery Clearance',
+    'Eliminating Typing Bottlenecks for High-Volume E-Commerce Delivery Personnel',
+    [
+      { h: 'Dedicated Provider Presets', d: 'Instant 1-tap buttons for Swiggy, Zomato, Amazon, Blinkit, and Flipkart eliminate tedious keyboard entry.' },
+      { h: 'Peak Delivery Ingress Speed', d: 'Reduces courier entry processing from 2 minutes down to under 5 seconds per delivery executive.' },
+      { h: 'Doorstep vs Gate Delivery Rules', d: 'Residents specify whether parcels are pre-approved to the door or must be left at the gate security desk.' },
+      { h: 'Tamper-Evident Courier Log', d: 'Automatically logs delivery company name, parcel target flat, timestamp, and guard badge ID in the database.' }
+    ],
+    'fresh_real_quick_delivery_modal.png',
+    7
+  );
+
+  // ==========================================
+  // SLIDE 8: PRE-APPROVED PASSES & QR
+  // ==========================================
+  addScreenshotSlide(
+    '07. Guest Automation',
+    'Pre-Approved Guest Passes & QR Code Scanner',
+    'Self-Serve Digital Invitations with Fast Optical Camera Verification at the Gate',
+    [
+      { h: 'Resident Self-Service Creation', d: 'Residents generate guest entry passes in advance with customized valid-from and valid-until date/time windows.' },
+      { h: 'Cryptographic 6-Digit OTP & QR', d: 'Each generated pass embeds a unique cryptographic 6-digit numeric token and scannable high-contrast QR code.' },
+      { h: '1-Click WhatsApp Sharing', d: 'Pre-formatted invitation message with pass link and QR code is sent directly to guests via WhatsApp.' },
+      { h: 'Optical Camera Scanner', d: 'Gatekeeper terminal scans guest QR or enters the 6-digit OTP for instant 2-second automated gate clearance.' }
+    ],
+    'fresh_pass_scanner_modal.png',
+    8
+  );
+
+  // ==========================================
+  // SLIDE 9: VISITOR REGISTRY & CHECKOUT
+  // ==========================================
+  addScreenshotSlide(
+    '08. Security Governance',
+    'Digital Visitor Registry & Historical Security Logs',
+    'Complete Tamper-Proof Audit Trail of Campus Traffic, Parking & Checkout Timestamps',
+    [
+      { h: 'Comprehensive Live Registry', d: 'Filterable, searchable ledger tracking visitor name, contact number, vehicle plate, arrival gate, and host flat.' },
+      { h: 'Real-Time Status Badges', d: 'Color-coded visual status tracking: INSIDE (currently on campus), CHECKED_OUT (departed), or REJECTED.' },
+      { h: '1-Tap Gate Checkout', d: 'Guards log departure with a single tap, recording exact exit timestamps and calculating total stay duration.' },
+      { h: 'Auditing & Police Incident Export', d: 'Historical logs are exportable for society committee reviews, incident investigations, or local authorities.' }
+    ],
+    'fresh_2_visitor_registry.png',
+    9
+  );
+
+  // ==========================================
+  // SLIDE 10: MAINTENANCE BILLING
+  // ==========================================
+  addScreenshotSlide(
+    '09. Financial Governance',
+    'Society Maintenance Billing & Accounting Ledger',
+    'Automated Dues Calculation, Payment Status Tracking & Community Issue Helpdesk',
+    [
+      { h: 'Digital Dues Management', d: 'Maintains flat-wise monthly maintenance bills with itemized breakdowns for water, security, sinking funds, and parking.' },
+      { h: 'Real-Time Payment Tracking', d: 'Instant visual classification of Paid, Pending, and Overdue flat accounts across all society blocks and wings.' },
+      { h: 'Printable Itemized PDF Invoices', d: 'Residents and administrators can view and print professional digital PDF invoices with detailed transaction logs.' },
+      { h: 'Community Helpdesk Integration', d: 'Integrated problem ticketing module allows residents to file repair tickets (plumbing, electrical) with real-time status.' }
+    ],
+    'fresh_3_maintenance_billing.png',
+    10
+  );
+
+  // ==========================================
+  // SLIDE 11: ZERO-TRUST SECURITY & OFFLINE
   // ==========================================
   {
-    applyHeaderFooter('Section 05', 'Module Deep-Dive', 'Resident Instant Push Alert & 1-Tap Approval', 'Zero Phone Calls Required — Secure Gate Decisions in Under 2 Seconds', 6);
+    applyHeaderFooter('10. Security & Resilience', 'Zero-Trust Security & Offline PWA Architecture', 'Hardened Protection, Multi-Tenant Boundary Isolation, and Continuous Offline Operation', 11);
 
-    // Left Column: Technical Workflow
-    doc.roundedRect(50, 108, 380, 375, 6).lineWidth(1).fillAndStroke(C.cardBg, C.cardBorder);
-    doc.rect(50, 108, 4, 375).fill(C.royalBlue);
-
-    doc.font('Helvetica-Bold').fontSize(11).fillColor(C.royalBlue).text('REAL-TIME APPROVAL ARCHITECTURE', 70, 126);
-
-    const steps = [
-      { step: '1', title: 'Guard Dispatches Visitor Entry', desc: 'Guard enters visitor details at cabin desk and hits Submit. The backend generates a temporary approval session.' },
-      { step: '2', title: 'WebSocket Event Routing (< 150ms)', desc: 'Spring Boot STOMP broker directs an arrival payload specifically to the subscribed flat channel.' },
-      { step: '3', title: 'Modal Pop-Up Alert on Smartphone', desc: 'Resident phone screen lights up with full-screen popup displaying visitor name, photo, purpose, and company.' },
-      { step: '4', title: 'One-Tap Decision Return', desc: 'Resident taps "Approve Entry" or "Deny Entry". The decision is relayed instantly to the guard screen with an audible chime.' }
-    ];
-
-    let sY = 156;
-    steps.forEach(s => {
-      doc.roundedRect(70, sY, 22, 22, 4).fill(C.cardBorder);
-      doc.font('Helvetica-Bold').fontSize(10.5).fillColor(C.primaryNavy).text(s.step, 77, sY + 5);
-
-      doc.font('Helvetica-Bold').fontSize(10).fillColor(C.textDark).text(s.title, 100, sY + 2);
-      doc.font('Helvetica').fontSize(9).fillColor(C.textBody).text(s.desc, 100, sY + 16, { width: 310, lineGap: 2.5 });
-      sY += 72;
-    });
-
-    // Right Column: Arrival Alert Screenshot
-    doc.roundedRect(450, 108, 460, 375, 6).lineWidth(1).fillAndStroke(C.cardBg, C.cardBorder);
-    doc.font('Helvetica-Bold').fontSize(10).fillColor(C.primaryNavy).text('SYSTEM INTERFACE: RESIDENT REAL-TIME POPUP ALERT', 468, 126);
-
-    const alertImg = path.resolve('screenshots/fresh_fig_8_3_arrival_alert.png');
-    if (fs.existsSync(alertImg)) {
-      doc.image(alertImg, 468, 148, { width: 424, fit: [424, 315] });
-    }
-  }
-
-  // ==========================================
-  // SLIDE 7: PRE-APPROVED GUEST PASSES & QR SCANNER
-  // ==========================================
-  {
-    applyHeaderFooter('Section 06', 'Module Deep-Dive', 'Pre-Approved Guest Passes & Digital QR Scanner', 'Frictionless Entry for Family, Party Guests, and Service Personnel', 7);
-
-    // Left Column: Capabilities
-    doc.roundedRect(50, 108, 380, 375, 6).lineWidth(1).fillAndStroke(C.cardBg, C.cardBorder);
-    doc.rect(50, 108, 4, 375).fill(C.successGreen);
-
-    doc.font('Helvetica-Bold').fontSize(11).fillColor(C.successGreen).text('FOUR PILLARS OF GUEST PASS SECURITY', 70, 126);
-
-    const passFeatures = [
-      { t: 'Pre-Approval by Resident', d: 'Residents generate digital passes in advance for expected guests, providing guest name, expected arrival date, and valid hours.' },
-      { t: 'Secure QR Code & 6-Digit OTP', d: 'System generates an encrypted QR code and fallback 6-digit numeric OTP sent directly to the guest via WhatsApp or SMS.' },
-      { t: 'Instant Camera QR Verification', d: 'The guard scans the guest QR code using the cabin webcam. GateSync validates pass status and logs entry in under 2 seconds.' },
-      { t: 'Automatic Expiration & Single Use', d: 'Passes automatically deactivate upon exit or when the time window lapses, preventing unauthorized reuse.' }
-    ];
-
-    let pY = 156;
-    passFeatures.forEach(item => {
-      doc.font('Helvetica-Bold').fontSize(10).fillColor(C.textDark).text(`•  ${item.t}`, 70, pY);
-      doc.font('Helvetica').fontSize(9).fillColor(C.textBody).text(item.d, 82, pY + 14, { width: 330, lineGap: 2.5 });
-      pY += 72;
-    });
-
-    // Right Column: Pass Scanner Screenshot
-    doc.roundedRect(450, 108, 460, 375, 6).lineWidth(1).fillAndStroke(C.cardBg, C.cardBorder);
-    doc.font('Helvetica-Bold').fontSize(10).fillColor(C.primaryNavy).text('SYSTEM INTERFACE: QR CODE & PASS SCANNER MODAL', 468, 126);
-
-    const scanImg = path.resolve('screenshots/fresh_pass_scanner_modal.png');
-    if (fs.existsSync(scanImg)) {
-      doc.image(scanImg, 468, 148, { width: 424, fit: [424, 315] });
-    }
-  }
-
-  // ==========================================
-  // SLIDE 8: SOCIETY ADMIN COMMAND CENTER
-  // ==========================================
-  {
-    applyHeaderFooter('Section 07', 'Module Deep-Dive', 'Management Command Center & Society Operations', 'Real-Time Visibility Over Society Residents, Staff, and Financial Health', 8);
-
-    // Left Column: Admin Capabilities
-    doc.roundedRect(50, 108, 380, 375, 6).lineWidth(1).fillAndStroke(C.cardBg, C.cardBorder);
-    doc.rect(50, 108, 4, 375).fill(C.royalBlue);
-
-    doc.font('Helvetica-Bold').fontSize(11).fillColor(C.royalBlue).text('MANAGEMENT COMMAND CAPABILITIES', 70, 126);
-
-    const adminModules = [
-      { t: 'Financial Collections Trend & Accounting', d: 'Monthly maintenance revenue trajectory tracking (INR) with payment breakdown, pending dues, and automated digital receipts.' },
-      { t: 'Resident & Flat Occupancy Records', d: 'Complete directory of 11+ occupied society units, family members, registered vehicles, and tenant lease statuses.' },
-      { t: 'Staff Administration & Active Guard Duty', d: 'Real-time monitoring of active security personnel on shift, assigned gate booths, and duty logs.' },
-      { t: 'Emergency Notice Board & Broadcasts', d: 'Instant publishing of critical circulars, water maintenance alerts, and society meeting notices to all resident phones.' }
-    ];
-
-    let aY = 156;
-    adminModules.forEach(item => {
-      doc.font('Helvetica-Bold').fontSize(10).fillColor(C.textDark).text(`•  ${item.t}`, 70, aY);
-      doc.font('Helvetica').fontSize(9).fillColor(C.textBody).text(item.d, 82, aY + 14, { width: 330, lineGap: 2.5 });
-      aY += 72;
-    });
-
-    // Right Column: Actual Dashboard Screenshot (Matching User's App Theme)
-    doc.roundedRect(450, 108, 460, 375, 6).lineWidth(1).fillAndStroke(C.cardBg, C.cardBorder);
-    doc.font('Helvetica-Bold').fontSize(10).fillColor(C.primaryNavy).text('SYSTEM INTERFACE: ADMIN PORTAL DASHBOARD', 468, 126);
-
-    const adminImg = path.resolve('screenshots/actual_gatesync_dashboard_dark.png');
-    if (fs.existsSync(adminImg)) {
-      doc.image(adminImg, 468, 148, { width: 424, fit: [424, 315] });
-    }
-  }
-
-  // ==========================================
-  // SLIDE 9: SECURITY ARCHITECTURE & DATA PRIVACY
-  // ==========================================
-  {
-    applyHeaderFooter('Section 08', 'Security Architecture', 'Security Architecture & Data Protection', 'Robust Defense Mechanisms Safeguarding Resident Privacy and Community Assets', 9);
-
-    const secCards = [
+    const secBoxes = [
       {
-        title: 'JWT STATELESS AUTHENTICATION',
-        color: C.royalBlue,
-        x: 50, y: 108, w: 415, h: 178,
-        desc: 'All API requests require cryptographically signed JSON Web Tokens (JWT) passed via Authorization Bearer headers. Tokens have strict 24-hour expiration windows and invalid signatures are immediately rejected with HTTP 401.'
-      },
-      {
-        title: 'BCRYPT PASSWORD HASHING',
-        color: C.primaryNavy,
-        x: 495, y: 108, w: 415, h: 178,
-        desc: 'All user credentials (Residents, Security Guards, Admins) are salted and hashed using 12-round BCrypt before persistence. Passwords are never stored or transmitted in plain text.'
-      },
-      {
-        title: 'ROLE-BASED ACCESS CONTROL (RBAC)',
-        color: C.successGreen,
-        x: 50, y: 305, w: 415, h: 178,
-        desc: 'Spring Security enforces strict path-level authorization: Guard endpoints (/api/guard/**), Resident endpoints (/api/resident/**), and Admin endpoints (/api/admin/**) are strictly isolated with zero cross-role privilege escalation.'
-      },
-      {
-        title: 'DATA PRIVACY & AUDIT LOGGING',
-        color: C.accentBlue,
-        x: 495, y: 305, w: 415, h: 178,
-        desc: 'Visitor phone numbers are masked in public registry views to prevent data scraping. Every entry, approval, denial, and gate checkout is immutably timestamped with the exact Guard ID and timestamp for forensic audit trails.'
-      }
-    ];
-
-    secCards.forEach(c => {
-      doc.roundedRect(c.x, c.y, c.w, c.h, 6).lineWidth(1).fillAndStroke(C.cardBg, C.cardBorder);
-      doc.rect(c.x, c.y, 4, c.h).fill(c.color);
-
-      doc.font('Helvetica-Bold').fontSize(11).fillColor(c.color).text(c.title, c.x + 20, c.y + 18);
-      doc.font('Helvetica').fontSize(9.5).fillColor(C.textBody).text(c.desc, c.x + 20, c.y + 40, { width: c.w - 40, lineGap: 3.5 });
-    });
-  }
-
-  // ==========================================
-  // SLIDE 10: CLOUD DEVOPS & DEPLOYMENT
-  // ==========================================
-  {
-    applyHeaderFooter('Section 09', 'Cloud DevOps', 'Production Cloud Deployment Architecture', 'Continuous Delivery, Containerization, and Automated Uptime Monitoring', 10);
-
-    const devopsPillars = [
-      {
-        title: 'FRONTEND PWA HOSTING',
-        tech: 'GitHub Pages CDN',
-        color: C.royalBlue,
-        x: 50,
-        bullets: [
-          'Vite-optimized production bundle with route code-splitting and asset compression.',
-          'Configured with custom base routing (`/sms1/`) and HTTPS encryption.',
-          'PWA Service Worker caches core static shell for offline accessibility.',
-          'Zero-cost hosting with 99.99% worldwide edge delivery SLA.'
+        title: 'ZERO-TRUST JWT SECURITY',
+        icon: 'SHIELD',
+        col: C.accentCyan,
+        points: [
+          '15-Minute rotating JWT access tokens kept in-memory (XSS immune).',
+          'Secure HttpOnly SameSite=Strict cookies for refresh tokens.',
+          'BCrypt salted password hashing with forced first-login password update.',
+          'Strict Role-Based Access Control (RBAC): ADMIN, RESIDENT, and GUARD.'
         ]
       },
       {
-        title: 'DOCKER BACKEND CONTAINER',
-        tech: 'Render Cloud (Java 21 JRE)',
-        color: C.primaryNavy,
-        x: 350,
-        bullets: [
-          'Multi-stage Dockerfile compiling Spring Boot with Maven 3.9 on Eclipse Temurin 21.',
-          'Minimal production container size (280MB) on Alpine Linux runtime.',
-          'Configured to listen dynamically on `$PORT` (10000) with memory constraints.',
-          'Automated git webhook triggers rebuild upon every push to `main` branch.'
+        title: 'OFFLINE-FIRST PWA RESILIENCE',
+        icon: 'LIGHTNING',
+        col: C.accentBlue,
+        points: [
+          'Service Worker precaches assets for 100% offline application startup.',
+          'Offline Transaction Queue stores visitor entries in LocalStorage.',
+          'Automatic synchronization immediately when network reconnects.',
+          'Segregated dual-database design: In-memory mapping + MongoDB Atlas.'
         ]
       },
       {
-        title: 'AUTOMATED NAP STOPPER',
-        tech: 'Uptime Keep-Alive Service',
-        color: C.successGreen,
-        x: 650,
-        bullets: [
-          'Custom REST endpoint (`/api/health`) returning server timestamp and system status.',
-          'External cron job pings `/api/health` every 10 minutes.',
-          'Completely eliminates Render 50-second free tier cold start delay.',
-          'Ensures gate guards and residents experience instant sub-second response times.'
+        title: 'AUDITING & EMERGENCY SOS',
+        icon: 'ALERT',
+        col: C.accentEmerald,
+        points: [
+          'Immutable audit logging capturing actor ID, IP address, and payload.',
+          '2-Second deduplication key window prevents duplicate alert spam.',
+          '100% multi-tenant data isolation ensures zero data leaks across societies.',
+          'Emergency SOS trigger sounds immediate guard desk alarm and siren.'
         ]
       }
     ];
 
-    devopsPillars.forEach(p => {
-      doc.roundedRect(p.x, 108, 260, 375, 6).lineWidth(1).fillAndStroke(C.cardBg, C.cardBorder);
-      doc.rect(p.x, 108, 260, 4).fill(p.color);
+    let sX = 50;
+    secBoxes.forEach(b => {
+      doc.roundedRect(sX, 110, 266, 370, 8).lineWidth(1.5).fillAndStroke(C.bgCard, b.col);
+      doc.font('Helvetica-Bold').fontSize(10.5).fillColor(b.col).text(b.title, sX + 15, 128);
 
-      doc.font('Helvetica-Bold').fontSize(11).fillColor(p.color).text(p.title, p.x + 18, 126);
-      doc.font('Helvetica-Bold').fontSize(13).fillColor(C.textDark).text(p.tech, p.x + 18, 142);
-
-      let bY = 172;
-      p.bullets.forEach(b => {
-        doc.font('Helvetica-Bold').fontSize(9.5).fillColor(p.color).text('•', p.x + 18, bY);
-        doc.font('Helvetica').fontSize(9).fillColor(C.textBody).text(b, p.x + 30, bY, { width: 210, lineGap: 2.5 });
-        bY += 68;
+      let pY = 165;
+      b.points.forEach(pt => {
+        doc.font('Helvetica-Bold').fontSize(9.5).fillColor(C.textWhite).text('•', sX + 15, pY);
+        doc.font('Helvetica').fontSize(9).fillColor(C.textLight).text(pt, sX + 28, pY, { width: 220, lineGap: 3 });
+        pY += 68;
       });
+
+      sX += 296;
     });
   }
 
   // ==========================================
-  // SLIDE 11: TESTING, BENCHMARKS & ROADMAP
-  // ==========================================
-  {
-    applyHeaderFooter('Section 10', 'Validation & Roadmap', 'System Testing, Benchmarks & Future Roadmap', 'Rigorous End-to-End Validation and Upcoming Engineering Enhancements', 11);
-
-    // Left Column: Testing
-    doc.roundedRect(50, 108, 415, 375, 6).lineWidth(1).fillAndStroke(C.cardBg, C.cardBorder);
-    doc.rect(50, 108, 4, 375).fill(C.royalBlue);
-
-    doc.font('Helvetica-Bold').fontSize(11).fillColor(C.royalBlue).text('EMPIRICAL PERFORMANCE BENCHMARKS', 70, 126);
-
-    const metrics = [
-      { m: '< 150 ms', l: 'WebSocket Alert Delivery Latency', d: 'From guard submission to resident screen popup under 50 concurrent active connections.' },
-      { m: '< 10 sec', l: 'Visitor Registration Intake Time', d: 'Reduced from 2–4 minutes on paper registers down to under 10 seconds at the gate cabin.' },
-      { m: '100 %', l: 'Role-Based Access Enforcement', d: 'Zero cross-role privilege leakage across 48 automated test suites verifying API boundaries.' },
-      { m: '99.8 %', l: 'Cloud System Uptime', d: 'Maintained across continuous demonstration through the `/api/health` automated keep-alive system.' }
-    ];
-
-    let mY = 154;
-    metrics.forEach(item => {
-      doc.font('Helvetica-Bold').fontSize(16).fillColor(C.royalBlue).text(item.m, 70, mY);
-      doc.font('Helvetica-Bold').fontSize(10).fillColor(C.textDark).text(item.l, 150, mY);
-      doc.font('Helvetica').fontSize(8.5).fillColor(C.textBody).text(item.d, 150, mY + 14, { width: 295, lineGap: 2 });
-      mY += 72;
-    });
-
-    // Right Column: Future Roadmap
-    doc.roundedRect(495, 108, 415, 375, 6).lineWidth(1).fillAndStroke(C.cardBg, C.cardBorder);
-    doc.rect(495, 108, 4, 375).fill(C.successGreen);
-
-    doc.font('Helvetica-Bold').fontSize(11).fillColor(C.successGreen).text('FUTURE ENGINEERING ROADMAP', 515, 126);
-
-    const roadmap = [
-      { t: 'ANPR Automated License Plate Recognition', d: 'Deploy edge camera models to automatically read vehicle number plates and open boom barriers for authorized resident vehicles.' },
-      { t: 'RFID Boom Barrier Hardware Integration', d: 'Integrate physical microcontroller relays (ESP32/Raspberry Pi) for RFID tag automated boom barrier actuation.' },
-      { t: 'AI Facial Recognition for Domestic Staff', d: 'Provide seamless biometric gate entry for recurring service personnel (maids, drivers, gardeners) without guard intervention.' },
-      { t: 'Multi-Society SaaS Architecture', d: 'Extend database schemas to support multi-tenant isolation, allowing multiple residential complexes to share a centralized cluster.' }
-    ];
-
-    let rY = 154;
-    roadmap.forEach(item => {
-      doc.font('Helvetica-Bold').fontSize(10).fillColor(C.textDark).text(`•  ${item.t}`, 515, rY);
-      doc.font('Helvetica').fontSize(9).fillColor(C.textBody).text(item.d, 527, rY + 14, { width: 360, lineGap: 2.5 });
-      rY += 72;
-    });
-  }
-
-  // ==========================================
-  // SLIDE 12: CONCLUSION & THANK YOU
+  // SLIDE 12: THANK YOU & DELIVERABLES
   // ==========================================
   {
     doc.addPage({ size: [960, 540], margins: { top: 0, bottom: 0, left: 0, right: 0 } });
-    doc.rect(0, 0, 960, 540).fill(C.bgLight);
+    doc.rect(0, 0, 960, 540).fill(C.bgDark);
 
-    // Top Royal Blue Accent Bar
-    doc.rect(0, 0, 960, 6).fill(C.royalBlue);
+    // Decorative top accent line
+    doc.rect(0, 0, 960, 8).fill(C.accentCyan);
 
     // Thank You Title
     doc.font('Helvetica-Bold')
-       .fontSize(34)
-       .fillColor(C.primaryNavy)
-       .text('CONCLUSION & THANK YOU', 60, 42);
+       .fontSize(46)
+       .fillColor(C.textWhite)
+       .text('THANK YOU', 60, 48, { characterSpacing: 2 });
 
     doc.font('Helvetica-Bold')
-       .fontSize(14)
-       .fillColor(C.royalBlue)
-       .text('GateSync — Redefining Modern Residential Security & Community Management', 60, 88);
+       .fontSize(15)
+       .fillColor(C.accentCyan)
+       .text('GateSync — Smart Society Security Platform  |  Evaluation & Discussion', 60, 110);
 
-    // Top Summary Card
-    doc.roundedRect(60, 118, 840, 72, 6)
-       .lineWidth(1)
-       .fillAndStroke(C.cardBg, C.cardBorder);
-    doc.rect(60, 118, 4, 72).fill(C.royalBlue);
-
-    doc.font('Helvetica-Bold').fontSize(10.5).fillColor(C.primaryNavy).text('PROJECT SUMMARY & CORE IMPACT', 80, 130);
-    doc.font('Helvetica').fontSize(9.5).fillColor(C.textBody).text('GateSync proves that a fully digital, real-time security management platform eliminates manual register bottlenecks, secures resident phone privacy, and accelerates visitor verification to under 2 seconds using enterprise Java & React architecture.', 80, 148, { width: 800, lineGap: 3 });
-
-    // Middle Card: Live Project Deliverables & URLs
-    doc.roundedRect(60, 202, 840, 134, 6)
-       .lineWidth(1)
-       .fillAndStroke(C.cardBg, C.cardBorder);
-    doc.rect(60, 202, 4, 134).fill(C.successGreen);
-
-    doc.font('Helvetica-Bold').fontSize(10.5).fillColor(C.successGreen).text('LIVE PROJECT DEPLOYMENTS & REPOSITORIES', 80, 216);
+    // Live Deployment Card
+    doc.roundedRect(60, 142, 840, 185, 8).lineWidth(1.5).fillAndStroke(C.bgCard, C.accentBlue);
+    doc.font('Helvetica-Bold').fontSize(11).fillColor(C.accentCyan).text('LIVE DELIVERABLES & PRODUCTION CLOUD ENDPOINTS', 85, 160);
 
     const links = [
-      { l: 'Live Web Application (PWA):', u: 'https://arpitthakor28.github.io/sms1/  (Responsive mobile & desktop client)' },
-      { l: 'Cloud Backend API (Render):', u: 'https://sms1-c9sj.onrender.com  (Spring Boot 3 + Java 21 REST & WebSocket server)' },
-      { l: 'Uptime Keep-Alive Monitor:', u: 'https://sms1-c9sj.onrender.com/api/health  (Automated Nap Stopper endpoint)' },
-      { l: 'GitHub Source Repository:', u: 'https://github.com/arpitthakor28/sms1  (Complete full-stack source code)' }
+      { label: 'Live Progressive Web App (PWA):', url: 'https://arpitthakor28.github.io/sms1/', note: 'Installable mobile/desktop frontend' },
+      { label: 'Live Cloud Backend API (Render):', url: 'https://sms1-c9sj.onrender.com', note: 'Spring Boot 3 + Java 21 container' },
+      { label: 'Cloud Nap Stopper / Health Check:', url: 'https://sms1-c9sj.onrender.com/api/health', note: 'Continuous uptime monitor' },
+      { label: 'GitHub Source Code Repository:', url: 'https://github.com/arpitthakor28/sms1', note: 'Full-stack source with reports & slides' }
     ];
 
-    let lY = 238;
-    links.forEach(item => {
-      doc.font('Helvetica-Bold').fontSize(9).fillColor(C.textDark).text(`•  ${item.l}`, 80, lY);
-      doc.font('Helvetica').fontSize(9).fillColor(C.royalBlue).text(item.u, 260, lY);
-      lY += 21;
+    let lY = 186;
+    links.forEach(l => {
+      doc.font('Helvetica-Bold').fontSize(9.5).fillColor(C.textWhite).text(`• ${l.label}`, 85, lY);
+      doc.font('Helvetica-Bold').fontSize(9.5).fillColor(C.accentCyan).text(l.url, 330, lY);
+      doc.font('Helvetica').fontSize(8.5).fillColor(C.textMuted).text(`(${l.note})`, 670, lY);
+      lY += 30;
     });
 
-    // Bottom Credentials Card
-    doc.roundedRect(60, 348, 840, 142, 6)
-       .lineWidth(1)
-       .fillAndStroke(C.cardBg, C.cardBorder);
-    doc.rect(60, 348, 4, 142).fill(C.primaryNavy);
+    // Student Credentials Card
+    doc.roundedRect(60, 345, 840, 140, 8).lineWidth(1).fillAndStroke(C.bgCard, C.bgCardBorder);
 
-    // Left: Student
-    doc.font('Helvetica-Bold').fontSize(8.5).fillColor(C.textMuted).text('STUDENT DEVELOPER', 85, 362);
-    doc.font('Helvetica-Bold').fontSize(15).fillColor(C.textDark).text('ARPITSINH THAKOR', 85, 378);
-    doc.font('Helvetica-Bold').fontSize(12).fillColor(C.royalBlue).text('Enrollment Number: 23SE02IE040', 85, 400);
-    doc.font('Helvetica').fontSize(10.5).fillColor(C.textBody).text('B.Tech in Information Technology & Engineering', 85, 420);
-    doc.font('Helvetica-Bold').fontSize(9.5).fillColor(C.primaryNavy).text('Technology Focus: Full Stack Development - Java', 85, 438);
+    // Left Column
+    doc.font('Helvetica-Bold').fontSize(9.5).fillColor(C.accentCyan).text('PROJECT DEVELOPED BY:', 85, 362);
+    doc.font('Helvetica-Bold').fontSize(15).fillColor(C.textWhite).text('ARPITSINH THAKOR', 85, 378);
+    doc.font('Helvetica-Bold').fontSize(12).fillColor(C.accentCyan).text('Enrollment Number: 23SE02IE040', 85, 400);
+    doc.font('Helvetica').fontSize(10.5).fillColor(C.textLight).text('B.Tech in Information Technology & Engineering', 85, 420);
+    doc.font('Helvetica-Bold').fontSize(9.5).fillColor(C.accentEmerald).text('Technology Focus: Full Stack Development - Java', 85, 438);
 
-    // Right: Institution
-    doc.font('Helvetica-Bold').fontSize(8.5).fillColor(C.textMuted).text('DEPARTMENT & INSTITUTION', 520, 362);
-    doc.font('Helvetica-Bold').fontSize(13).fillColor(C.textDark).text('School of Engineering', 520, 378);
-    doc.font('Helvetica-Bold').fontSize(11).fillColor(C.royalBlue).text('P. P. Savani University, Surat, Gujarat', 520, 396);
-    doc.font('Helvetica').fontSize(10).fillColor(C.textBody).text('Major Engineering Project Presentation  •  Academic Year 2025–2026', 520, 416);
+    // Right Column
+    doc.font('Helvetica-Bold').fontSize(9.5).fillColor(C.accentCyan).text('DEPARTMENT & INSTITUTION:', 520, 362);
+    doc.font('Helvetica-Bold').fontSize(13).fillColor(C.textWhite).text('School of Engineering', 520, 378);
+    doc.font('Helvetica').fontSize(10.5).fillColor(C.textLight).text('P. P. Savani University, Surat, Gujarat', 520, 396);
+    doc.font('Helvetica-Bold').fontSize(11).fillColor(C.accentCyan).text('Final Year Project  •  Academic Year 2026–2027', 520, 420);
 
     // Footer
     doc.font('Helvetica')
        .fontSize(8.5)
        .fillColor(C.textMuted)
-       .text('GateSync — Smart Society Security System  |  All Rights Reserved © 2026', 60, 515);
+       .text('GATESYNC • Smart Residential Security Platform  |  All Rights Reserved © 2026–2027', 60, 514);
   }
 
   doc.end();
 
   stream.on('finish', () => {
-    console.log(`Human Executive PDF Generated: ${outputPath}`);
+    console.log(`Presentation PDF generated successfully: ${outputPath}`);
 
     // Copy to Downloads, public, and docs
     const dlPath = 'c:\\Users\\ASUS\\Downloads\\GateSync_Project_Presentation.pdf';
@@ -735,19 +518,19 @@ function createHumanExecutivePresentationPDF() {
 
     try {
       fs.copyFileSync(outputPath, dlPath);
-      console.log(`Copied PDF to Downloads: ${dlPath}`);
+      console.log(`Copied presentation PDF to Downloads: ${dlPath}`);
     } catch (e) {
-      console.warn('Could not copy PDF to Downloads:', e.message);
+      console.warn('Could not copy to Downloads:', e.message);
     }
 
     try {
       fs.copyFileSync(outputPath, pubPath);
       fs.copyFileSync(outputPath, docsPath);
-      console.log(`Copied PDF to public/ and docs/`);
+      console.log(`Copied presentation PDF to public/ and docs/`);
     } catch (e) {
-      console.warn('Could not copy PDF to web dirs:', e.message);
+      console.warn('Could not copy to web dirs:', e.message);
     }
   });
 }
 
-createHumanExecutivePresentationPDF();
+createPresentationPDF();
