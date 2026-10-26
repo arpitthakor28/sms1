@@ -300,7 +300,7 @@ function createWhiteExecutivePresentationPDF() {
       { h: 'Rapid Operational Shortcuts', d: '1-tap access to visitor registries, staff management, resident directory, maintenance ledger, and campus broadcast dispatches.' },
       { h: 'Multi-Tenant Scoping', d: 'Strict role-based isolation guarantees that committee members only view statistics belonging to their society complex.' }
     ],
-    'actual_gatesync_dashboard_dark.png',
+    'actual_gatesync_dashboard_white.png',
     4
   );
 
@@ -491,17 +491,16 @@ function createWhiteExecutivePresentationPDF() {
     doc.font('Helvetica-Bold').fontSize(10.5).fillColor(C.royalBlue).text('LIVE DELIVERABLES & PRODUCTION CLOUD ENDPOINTS', 80, 134);
 
     const links = [
-      { label: 'Live Progressive Web App (PWA):', url: 'https://arpitthakor28.github.io/sms1/', note: 'Installable mobile/desktop frontend' },
-      { label: 'Live Cloud Backend API (Render):', url: 'https://sms1-c9sj.onrender.com', note: 'Spring Boot 3 + Java 21 container' },
-      { label: 'Cloud Nap Stopper / Health Check:', url: 'https://sms1-c9sj.onrender.com/api/health', note: 'Continuous uptime monitor' },
-      { label: 'GitHub Source Code Repository:', url: 'https://github.com/arpitthakor28/sms1', note: 'Full-stack source with reports & slides' }
+      { label: 'Live Progressive Web App (PWA):', url: 'https://arpitthakor28.github.io/sms1/' },
+      { label: 'Live Cloud Backend API (Render):', url: 'https://sms1-c9sj.onrender.com' },
+      { label: 'Cloud Nap Stopper / Health Check:', url: 'https://sms1-c9sj.onrender.com/api/health' },
+      { label: 'GitHub Source Code Repository:', url: 'https://github.com/arpitthakor28/sms1' }
     ];
 
-    let lY = 158;
+    let lY = 160;
     links.forEach(l => {
       doc.font('Helvetica-Bold').fontSize(9.5).fillColor(C.textDark).text(`•  ${l.label}`, 80, lY);
-      doc.font('Helvetica-Bold').fontSize(9.5).fillColor(C.royalBlue).text(l.url, 310, lY);
-      doc.font('Helvetica').fontSize(8.5).fillColor(C.textMuted).text(`(${l.note})`, 670, lY);
+      doc.font('Helvetica-Bold').fontSize(9.5).fillColor(C.royalBlue).text(l.url, 330, lY);
       lY += 28;
     });
 

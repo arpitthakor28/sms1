@@ -384,7 +384,7 @@ async function createWhiteExecutivePresentationPPTX() {
       { h: 'Rapid Operational Shortcuts', d: '1-tap access to visitor registries, staff management, resident directory, maintenance ledger, and campus broadcast dispatches.' },
       { h: 'Multi-Tenant Scoping', d: 'Strict role-based isolation guarantees that committee members only view statistics belonging to their society complex.' }
     ],
-    'actual_gatesync_dashboard_dark.png',
+    'actual_gatesync_dashboard_white.png',
     4
   );
 
@@ -606,16 +606,16 @@ async function createWhiteExecutivePresentationPPTX() {
 
     slide.addText([
       { text: '•  Live Progressive Web App (PWA):  ', options: { bold: true, color: C.textDark } },
-      { text: 'https://arpitthakor28.github.io/sms1/  (Installable mobile/desktop frontend)\n', options: { color: C.royalBlue } },
+      { text: 'https://arpitthakor28.github.io/sms1/\n\n', options: { color: C.royalBlue } },
       { text: '•  Live Cloud Backend API (Render):  ', options: { bold: true, color: C.textDark } },
-      { text: 'https://sms1-c9sj.onrender.com  (Spring Boot 3 + Java 21 container)\n', options: { color: C.royalBlue } },
+      { text: 'https://sms1-c9sj.onrender.com\n\n', options: { color: C.royalBlue } },
       { text: '•  Cloud Nap Stopper / Health Check:  ', options: { bold: true, color: C.textDark } },
-      { text: 'https://sms1-c9sj.onrender.com/api/health  (Continuous uptime monitor)\n', options: { color: C.royalBlue } },
+      { text: 'https://sms1-c9sj.onrender.com/api/health\n\n', options: { color: C.royalBlue } },
       { text: '•  GitHub Source Code Repository:  ', options: { bold: true, color: C.textDark } },
-      { text: 'https://github.com/arpitthakor28/sms1  (Full-stack source with reports & slides)', options: { color: C.royalBlue } }
+      { text: 'https://github.com/arpitthakor28/sms1', options: { color: C.royalBlue } }
     ], {
       x: 0.85, y: 2.05, w: 8.3, h: 1.15,
-      fontSize: 9, fontFace: 'Calibri'
+      fontSize: 9.5, fontFace: 'Calibri'
     });
 
     // Student Credentials Card
