@@ -2,7 +2,7 @@ const PDFDocument = require('pdfkit');
 const fs = require('fs');
 const path = require('path');
 
-function createPresentationPDF() {
+function createWhiteExecutivePresentationPDF() {
   const doc = new PDFDocument({
     size: [960, 540], // 16:9 Widescreen
     margins: { top: 0, bottom: 0, left: 0, right: 0 },
@@ -13,149 +13,186 @@ function createPresentationPDF() {
   const stream = fs.createWriteStream(outputPath);
   doc.pipe(stream);
 
-  // Cold temperature color palette (Matching Second PPT)
+  // Professional White & Cold Executive Palette
   const C = {
-    bgDark: '#0B132B',       // Deepest slate navy
-    bgCard: '#162238',       // Cold card background
-    bgCardBorder: '#243656', // Crisp slate outline
-    accentCyan: '#38BDF8',   // Icy cyan highlight
-    accentBlue: '#0284C7',   // Cold sky blue
-    accentEmerald: '#10B981',// Mint confirmation
-    accentPurple: '#A855F7', // Royal purple accent
-    accentRed: '#EF4444',    // Danger / Problem red
-    textWhite: '#FFFFFF',    // Pure white
-    textLight: '#CBD5E1',    // Cool silver text
-    textMuted: '#94A3B8',    // Muted slate gray
+    bgLight: '#F8FAFC',       // Clean executive off-white background
+    cardBg: '#FFFFFF',        // Pure white card container
+    cardBorder: '#E2E8F0',    // Subtle soft cool slate border
+    cardBorderDark: '#CBD5E1',// Crisp accent border
+    primaryNavy: '#0F2942',   // Deep authoritative navy for titles
+    royalBlue: '#1E40AF',     // Professional academic royal blue
+    accentBlue: '#0284C7',    // Tech blue accent
+    textDark: '#0F172A',      // High-contrast charcoal headings
+    textBody: '#334155',      // Clean readable slate body text
+    textMuted: '#64748B',     // Cool slate metadata
+    alertRed: '#DC2626',      // Corporate danger red
+    successGreen: '#16A34A',  // Corporate success green
+    headerDivider: '#E2E8F0'  // Clean divider line
   };
 
-  // Helper for slide common header and footer
+  // Helper for slide common header and footer (NO awkward pill badge!)
   function applyHeaderFooter(category, title, subtitle, slideNum) {
     doc.addPage({ size: [960, 540], margins: { top: 0, bottom: 0, left: 0, right: 0 } });
 
-    // Solid background
-    doc.rect(0, 0, 960, 540).fill(C.bgDark);
+    // Page Background
+    doc.rect(0, 0, 960, 540).fill(C.bgLight);
 
-    // Top icy accent bar
-    doc.rect(0, 0, 960, 5).fill(C.accentBlue);
+    // Top Royal Blue Accent Line
+    doc.rect(0, 0, 960, 4).fill(C.royalBlue);
 
-    // Category / Tag
+    // Section Breadcrumb - Clean Human Typography
     doc.font('Helvetica-Bold')
-       .fontSize(10)
-       .fillColor(C.accentCyan)
-       .text(category.toUpperCase(), 50, 32, { width: 860 });
+       .fontSize(8.5)
+       .fillColor(C.royalBlue)
+       .text(category.toUpperCase(), 50, 24);
 
     // Slide Title
     doc.font('Helvetica-Bold')
-       .fontSize(21)
-       .fillColor(C.textWhite)
-       .text(title, 50, 48, { width: 860 });
+       .fontSize(19)
+       .fillColor(C.primaryNavy)
+       .text(title, 50, 44, { width: 860 });
 
-    // Slide Subtitle
+    // Subtitle
     if (subtitle) {
       doc.font('Helvetica')
-         .fontSize(10.5)
+         .fontSize(9.5)
          .fillColor(C.textMuted)
-         .text(subtitle, 50, 76, { width: 860 });
+         .text(subtitle, 50, 68, { width: 860 });
     }
 
-    // Bottom footer line
-    doc.strokeColor(C.bgCardBorder)
+    // Header divider line
+    doc.strokeColor(C.headerDivider)
        .lineWidth(1)
-       .moveTo(50, 505)
-       .lineTo(910, 505)
+       .moveTo(50, 88)
+       .lineTo(910, 88)
+       .stroke();
+
+    // Footer divider line
+    doc.strokeColor(C.headerDivider)
+       .lineWidth(1)
+       .moveTo(50, 506)
+       .lineTo(910, 506)
        .stroke();
 
     // Footer Text Left
     doc.font('Helvetica')
-       .fontSize(9)
+       .fontSize(8.5)
        .fillColor(C.textMuted)
-       .text('GATESYNC • Smart Residential Security Platform  |  Arpitsinh Thakor (23SE02IE040)', 50, 514);
+       .text('GateSync — Smart Society Security Platform  |  Arpitsinh Thakor (23SE02IE040)', 50, 515);
 
     // Footer Text Right
     doc.font('Helvetica-Bold')
-       .fontSize(9)
-       .fillColor(C.accentCyan)
-       .text(`SCHOOL OF ENGINEERING  •  SLIDE ${slideNum} / 12`, 50, 514, { width: 860, align: 'right' });
+       .fontSize(8.5)
+       .fillColor(C.royalBlue)
+       .text(`SCHOOL OF ENGINEERING  •  SLIDE ${slideNum} / 12`, 50, 515, { width: 860, align: 'right' });
+  }
+
+  // Helper function for Screenshot slides
+  function addScreenshotSlide(cat, title, sub, bullets, imgName, slideNum) {
+    applyHeaderFooter(cat, title, sub, slideNum);
+
+    // Left Column: Text & Features Card
+    doc.roundedRect(50, 106, 415, 380, 6).lineWidth(1).fillAndStroke(C.cardBg, C.cardBorder);
+    doc.rect(50, 106, 4, 380).fill(C.royalBlue);
+
+    doc.font('Helvetica-Bold').fontSize(10.5).fillColor(C.royalBlue).text('CORE FUNCTIONALITY & WORKFLOW', 70, 124);
+
+    let bY = 152;
+    bullets.forEach(b => {
+      doc.font('Helvetica-Bold').fontSize(10).fillColor(C.textDark).text(`• ${b.h}:`, 70, bY);
+      doc.font('Helvetica').fontSize(9).fillColor(C.textBody).text(b.d, 70, bY + 14, { width: 375, lineGap: 2.5 });
+      bY += 72;
+    });
+
+    // Right Column: Framed Screenshot Card
+    doc.roundedRect(485, 106, 425, 380, 6).lineWidth(1).fillAndStroke(C.cardBg, C.cardBorder);
+
+    const imgPath = path.resolve('screenshots/' + imgName);
+    if (fs.existsSync(imgPath)) {
+      doc.image(imgPath, 495, 116, { width: 405, height: 360, fit: [405, 360], align: 'center', valign: 'center' });
+    }
   }
 
   // ==========================================
-  // SLIDE 1: COVER SLIDE
+  // SLIDE 1: COVER SLIDE (WHITE EXECUTIVE THEME)
   // ==========================================
   {
     doc.addPage({ size: [960, 540], margins: { top: 0, bottom: 0, left: 0, right: 0 } });
-    doc.rect(0, 0, 960, 540).fill(C.bgDark);
+    doc.rect(0, 0, 960, 540).fill(C.bgLight);
 
-    // Decorative icy accent line
-    doc.rect(0, 0, 960, 8).fill(C.accentCyan);
+    // Top Royal Blue Accent Bar
+    doc.rect(0, 0, 960, 6).fill(C.royalBlue);
 
-    // Institution Badge
-    doc.roundedRect(60, 42, 480, 32, 6)
-       .fillAndStroke(C.bgCard, C.bgCardBorder);
+    // University Header Line
+    doc.rect(60, 36, 4, 18).fill(C.royalBlue);
     doc.font('Helvetica-Bold')
-       .fontSize(10)
-       .fillColor(C.accentCyan)
-       .text('P. P. SAVANI UNIVERSITY • SCHOOL OF ENGINEERING', 75, 52);
+       .fontSize(10.5)
+       .fillColor(C.primaryNavy)
+       .text('P. P. SAVANI UNIVERSITY  •  SCHOOL OF ENGINEERING', 72, 40);
 
-    // University Logo
+    // University Logo (Top Right)
     const logoPath = path.resolve('screenshots/ppsu_logo.png');
     if (fs.existsSync(logoPath)) {
-      doc.image(logoPath, 760, 36, { width: 140, fit: [140, 70] });
+      doc.image(logoPath, 760, 30, { width: 140, fit: [140, 65] });
     }
 
-    // Main Title: GATESYNC
+    // Main Project Title
     doc.font('Helvetica-Bold')
-       .fontSize(48)
-       .fillColor(C.textWhite)
-       .text('GATESYNC', 60, 96, { characterSpacing: 2 });
+       .fontSize(42)
+       .fillColor(C.primaryNavy)
+       .text('GATESYNC', 60, 84);
 
     // Subtitle
     doc.font('Helvetica-Bold')
        .fontSize(15)
-       .fillColor(C.accentCyan)
-       .text('Smart Gated Community Security & Real-Time Visitor Management Platform', 60, 156);
+       .fillColor(C.royalBlue)
+       .text('Smart Residential Society Security & Visitor Management System', 60, 138);
 
-    // Brief Overview paragraph
+    // Human Engineering Summary
     doc.font('Helvetica')
-       .fontSize(11)
-       .fillColor(C.textLight)
-       .text('An enterprise-grade, offline-first Progressive Web Application (PWA) replacing legacy paper visitor registers with sub-150ms bidirectional STOMP WebSocket gatekeeper alerts, 1-tap logistics clearance, and cryptographic guest access.', 60, 188, { width: 840, lineGap: 4 });
+       .fontSize(10.5)
+       .fillColor(C.textBody)
+       .text('An enterprise-grade, offline-first Progressive Web Application (PWA) replacing legacy paper visitor registers with sub-150ms bidirectional STOMP WebSocket gatekeeper alerts, 1-tap logistics clearance, and cryptographic guest access.', 60, 168, { width: 840, lineGap: 3.5 });
 
-    // Student Information Card
-    doc.roundedRect(60, 252, 840, 218, 8)
-       .lineWidth(1.5)
-       .fillAndStroke(C.bgCard, C.accentBlue);
+    // Candidate Credentials Container Card (Pure white card with navy stripe)
+    doc.roundedRect(60, 238, 840, 238, 6)
+       .lineWidth(1)
+       .fillAndStroke(C.cardBg, C.cardBorder);
 
-    // Inner Card Content: Left Column
-    doc.font('Helvetica-Bold').fontSize(9.5).fillColor(C.accentCyan).text('DEVELOPED & PRESENTED BY:', 85, 272);
-    doc.font('Helvetica-Bold').fontSize(16).fillColor(C.textWhite).text('ARPITSINH THAKOR', 85, 288);
+    // Navy Accent Stripe on left
+    doc.rect(60, 238, 5, 238).fill(C.primaryNavy);
 
-    doc.font('Helvetica-Bold').fontSize(9.5).fillColor(C.accentCyan).text('ENROLLMENT NUMBER:', 85, 324);
-    doc.font('Helvetica-Bold').fontSize(14).fillColor(C.textWhite).text('23SE02IE040', 85, 340);
+    // Left Column: Student Credentials
+    doc.font('Helvetica-Bold').fontSize(8.5).fillColor(C.textMuted).text('STUDENT DEVELOPER', 85, 258);
+    doc.font('Helvetica-Bold').fontSize(16).fillColor(C.textDark).text('ARPITSINH THAKOR', 85, 274);
 
-    doc.font('Helvetica-Bold').fontSize(9.5).fillColor(C.accentCyan).text('ACADEMIC PROGRAM:', 85, 376);
-    doc.font('Helvetica-Bold').fontSize(11.5).fillColor(C.textWhite).text('B.Tech in Information Technology & Engineering', 85, 392);
-    doc.font('Helvetica').fontSize(10.5).fillColor(C.textLight).text('School of Engineering', 85, 410);
+    doc.font('Helvetica-Bold').fontSize(8.5).fillColor(C.textMuted).text('ENROLLMENT NUMBER', 85, 312);
+    doc.font('Helvetica-Bold').fontSize(14).fillColor(C.royalBlue).text('23SE02IE040', 85, 328);
 
-    doc.font('Helvetica-Bold').fontSize(9.5).fillColor(C.accentCyan).text('TECHNOLOGY FOCUS:', 85, 432);
-    doc.font('Helvetica-Bold').fontSize(11).fillColor(C.accentEmerald).text('Full Stack Development - Java', 85, 446);
+    doc.font('Helvetica-Bold').fontSize(8.5).fillColor(C.textMuted).text('DEGREE & BRANCH', 85, 366);
+    doc.font('Helvetica-Bold').fontSize(11.5).fillColor(C.textDark).text('B.Tech in Information Technology & Engineering', 85, 382);
+    doc.font('Helvetica').fontSize(10.5).fillColor(C.textBody).text('School of Engineering', 85, 400);
 
-    // Inner Card Content: Right Column
-    doc.font('Helvetica-Bold').fontSize(9.5).fillColor(C.accentCyan).text('ACADEMIC INSTITUTION:', 520, 272);
-    doc.font('Helvetica-Bold').fontSize(13).fillColor(C.textWhite).text('School of Engineering', 520, 288);
-    doc.font('Helvetica').fontSize(10.5).fillColor(C.textLight).text('P. P. Savani University, Surat, Gujarat, India', 520, 306);
+    doc.font('Helvetica-Bold').fontSize(8.5).fillColor(C.textMuted).text('TECHNOLOGY FOCUS', 85, 426);
+    doc.font('Helvetica-Bold').fontSize(11.5).fillColor(C.successGreen).text('Full Stack Development - Java', 85, 442);
 
-    doc.font('Helvetica-Bold').fontSize(9.5).fillColor(C.accentCyan).text('PROJECT CATEGORY:', 520, 342);
-    doc.font('Helvetica-Bold').fontSize(13).fillColor(C.textWhite).text('Final Year Project', 520, 358);
+    // Right Column: Institution & Academic Details
+    doc.font('Helvetica-Bold').fontSize(8.5).fillColor(C.textMuted).text('INSTITUTION', 520, 258);
+    doc.font('Helvetica-Bold').fontSize(13).fillColor(C.textDark).text('School of Engineering', 520, 274);
+    doc.font('Helvetica').fontSize(10).fillColor(C.textBody).text('P. P. Savani University, Surat, Gujarat, India', 520, 292);
 
-    doc.font('Helvetica-Bold').fontSize(9.5).fillColor(C.accentCyan).text('ACADEMIC YEAR:', 520, 394);
-    doc.font('Helvetica-Bold').fontSize(13).fillColor(C.accentCyan).text('Academic Year 2026–2027', 520, 410);
-    doc.font('Helvetica').fontSize(10).fillColor(C.textMuted).text('Major Project Presentation (AY 2026–2027)', 520, 430);
+    doc.font('Helvetica-Bold').fontSize(8.5).fillColor(C.textMuted).text('PROJECT CATEGORY', 520, 328);
+    doc.font('Helvetica-Bold').fontSize(13).fillColor(C.textDark).text('Final Year Project', 520, 344);
 
-    // Bottom slide footer
+    doc.font('Helvetica-Bold').fontSize(8.5).fillColor(C.textMuted).text('ACADEMIC YEAR', 520, 380);
+    doc.font('Helvetica-Bold').fontSize(13).fillColor(C.royalBlue).text('Academic Year 2026–2027', 520, 396);
+    doc.font('Helvetica').fontSize(10).fillColor(C.textMuted).text('Major Project Presentation (AY 2026–2027)', 520, 414);
+
+    // Footer
     doc.font('Helvetica')
        .fontSize(8.5)
        .fillColor(C.textMuted)
-       .text('GateSync Production Platform  •  https://github.com/arpitthakor28/sms1', 60, 514);
+       .text('GateSync — Smart Society Security System  |  School of Engineering, PPSU', 60, 515);
   }
 
   // ==========================================
@@ -165,8 +202,10 @@ function createPresentationPDF() {
     applyHeaderFooter('01. Background & Challenges', 'Problem Statement & Motivation', 'Why Traditional Physical Gatehouse Registers Fail in Modern Residential Societies', 2);
 
     // Left Column: The Problem
-    doc.roundedRect(50, 110, 415, 370, 8).lineWidth(1.5).fillAndStroke(C.bgCard, C.accentRed);
-    doc.font('Helvetica-Bold').fontSize(11).fillColor('#F87171').text('CRITICAL LIMITATIONS OF PAPER LOGBOOKS', 70, 128);
+    doc.roundedRect(50, 106, 415, 380, 6).lineWidth(1).fillAndStroke(C.cardBg, C.cardBorder);
+    doc.rect(50, 106, 4, 380).fill(C.alertRed);
+
+    doc.font('Helvetica-Bold').fontSize(11).fillColor(C.alertRed).text('CRITICAL LIMITATIONS OF PAPER LOGBOOKS', 70, 124);
 
     const problems = [
       { t: 'Severe Gate Queue Bottlenecks', d: 'Manual pen-and-paper logging consumes 3–5 minutes per entering vehicle, causing long congestion queues at society entry gates.' },
@@ -175,16 +214,18 @@ function createPresentationPDF() {
       { t: 'E-Commerce Courier Overload', d: 'Modern high-frequency logistics (Swiggy, Zomato, Amazon, Blinkit) overwhelm gatekeepers with constant repetitive manual logging.' }
     ];
 
-    let pY = 160;
+    let pY = 152;
     problems.forEach(p => {
-      doc.font('Helvetica-Bold').fontSize(10.5).fillColor(C.textWhite).text(`• ${p.t}:`, 70, pY);
-      doc.font('Helvetica').fontSize(9.5).fillColor(C.textLight).text(p.d, 70, pY + 14, { width: 375, lineGap: 3 });
+      doc.font('Helvetica-Bold').fontSize(10).fillColor(C.textDark).text(`• ${p.t}:`, 70, pY);
+      doc.font('Helvetica').fontSize(9).fillColor(C.textBody).text(p.d, 70, pY + 14, { width: 375, lineGap: 2.5 });
       pY += 72;
     });
 
     // Right Column: The Solution
-    doc.roundedRect(495, 110, 415, 370, 8).lineWidth(1.5).fillAndStroke(C.bgCard, C.accentCyan);
-    doc.font('Helvetica-Bold').fontSize(11).fillColor(C.accentCyan).text('THE GATESYNC DIGITAL TRANSFORMATION', 515, 128);
+    doc.roundedRect(485, 106, 425, 380, 6).lineWidth(1).fillAndStroke(C.cardBg, C.cardBorder);
+    doc.rect(485, 106, 4, 380).fill(C.successGreen);
+
+    doc.font('Helvetica-Bold').fontSize(11).fillColor(C.successGreen).text('THE GATESYNC DIGITAL TRANSFORMATION', 505, 124);
 
     const solutions = [
       { t: 'Sub-150ms Instant Push Alerting', d: 'Bidirectional STOMP WebSockets push arrival alerts straight to the resident mobile screen before the visitor reaches the barrier.' },
@@ -193,10 +234,10 @@ function createPresentationPDF() {
       { t: '1-Tap Logistics Partner Clearing', d: 'Dedicated 1-tap fast ingress for Swiggy, Zomato, Amazon, and Blinkit completely eliminates typing bottlenecks.' }
     ];
 
-    let sY = 160;
+    let sY = 152;
     solutions.forEach(s => {
-      doc.font('Helvetica-Bold').fontSize(10.5).fillColor(C.textWhite).text(`• ${s.t}:`, 515, sY);
-      doc.font('Helvetica').fontSize(9.5).fillColor(C.textLight).text(s.d, 515, sY + 14, { width: 375, lineGap: 3 });
+      doc.font('Helvetica-Bold').fontSize(10).fillColor(C.textDark).text(`• ${s.t}:`, 505, sY);
+      doc.font('Helvetica').fontSize(9).fillColor(C.textBody).text(s.d, 505, sY + 14, { width: 385, lineGap: 2.5 });
       sY += 72;
     });
   }
@@ -208,24 +249,28 @@ function createPresentationPDF() {
     applyHeaderFooter('02. Engineering Architecture', 'Full-Stack Architecture & Technology Stack', 'Robust Multi-Tier Cloud Architecture Built for Real-Time Responsiveness and Zero Data Loss', 3);
 
     const tiers = [
-      { name: 'CLIENT PRESENTATION TIER (PWA)', col: C.accentCyan, tech: 'React 19 • Vite • Lucide Icons • STOMP over SockJS • Service Worker Precaching', desc: 'Installable Progressive Web App (PWA) with responsive layouts, offline transaction queue, and audible chime notifications.' },
-      { name: 'BACKEND MICROSERVICE CORE (JAVA)', col: C.accentBlue, tech: 'Java 21 LTS • Spring Boot 3.3.4 • Spring Security 6 • JJWT • RESTful APIs', desc: 'Stateless multi-tenant controllers, WebSocket message broker (/topic and /user/queue), and atomic concurrency locks.' },
-      { name: 'DUAL-DATABASE PERSISTENCE STRATEGY', col: C.accentEmerald, tech: 'MongoDB Atlas Cloud (Distributed NoSQL) + Relational Enterprise Mapping', desc: 'MongoDB Atlas stores high-throughput notifications, pre-approved passes, and audit trails; robust relational schemas for billing.' },
-      { name: 'CLOUD DEPLOYMENT & CI/CD INFRASTRUCTURE', col: C.accentPurple, tech: 'Render Cloud (Dockerized Spring Boot Container) + GitHub Pages (Production PWA)', desc: 'Fully automated continuous deployment with sub-second health monitors (/api/health) and automated failovers.' }
+      { name: 'CLIENT PRESENTATION TIER (PWA)', col: C.royalBlue, tech: 'React 19 • Vite • Lucide Icons • STOMP over SockJS • Service Worker Precaching', desc: 'Installable Progressive Web App (PWA) with responsive layouts, offline transaction queue, and audible chime notifications.' },
+      { name: 'BACKEND MICROSERVICE CORE (JAVA)', col: C.primaryNavy, tech: 'Java 21 LTS • Spring Boot 3.3.4 • Spring Security 6 • JJWT • RESTful APIs', desc: 'Stateless multi-tenant controllers, WebSocket message broker (/topic and /user/queue), and atomic concurrency locks.' },
+      { name: 'DUAL-DATABASE PERSISTENCE STRATEGY', col: C.successGreen, tech: 'MongoDB Atlas Cloud (Distributed NoSQL) + Relational Enterprise Mapping', desc: 'MongoDB Atlas stores high-throughput notifications, pre-approved passes, and audit trails; robust relational schemas for billing.' },
+      { name: 'CLOUD DEPLOYMENT & CI/CD INFRASTRUCTURE', col: C.accentBlue, tech: 'Render Cloud (Dockerized Spring Boot Container) + GitHub Pages (Production PWA)', desc: 'Fully automated continuous deployment with sub-second health monitors (/api/health) and automated failovers.' }
     ];
 
-    let tY = 110;
+    let tY = 106;
     tiers.forEach(t => {
-      doc.roundedRect(50, tY, 530, 84, 6).lineWidth(1).fillAndStroke(C.bgCard, C.bgCardBorder);
+      doc.roundedRect(50, tY, 530, 86, 6).lineWidth(1).fillAndStroke(C.cardBg, C.cardBorder);
+      doc.rect(50, tY, 4, 86).fill(t.col);
+
       doc.font('Helvetica-Bold').fontSize(9.5).fillColor(t.col).text(t.name, 65, tY + 10);
-      doc.font('Helvetica-Bold').fontSize(10.5).fillColor(C.textWhite).text(t.tech, 65, tY + 26);
-      doc.font('Helvetica').fontSize(9).fillColor(C.textLight).text(t.desc, 65, tY + 44, { width: 500, lineGap: 2 });
-      tY += 94;
+      doc.font('Helvetica-Bold').fontSize(10.5).fillColor(C.textDark).text(t.tech, 65, tY + 26);
+      doc.font('Helvetica').fontSize(9).fillColor(C.textBody).text(t.desc, 65, tY + 44, { width: 500, lineGap: 2 });
+      tY += 96;
     });
 
     // Right Column: Key Architectural Benchmarks Box
-    doc.roundedRect(600, 110, 310, 370, 8).lineWidth(1.5).fillAndStroke(C.bgCard, C.accentCyan);
-    doc.font('Helvetica-Bold').fontSize(11).fillColor(C.accentCyan).text('ARCHITECTURAL BENCHMARKS', 620, 128);
+    doc.roundedRect(600, 106, 310, 380, 6).lineWidth(1).fillAndStroke(C.cardBg, C.cardBorder);
+    doc.rect(600, 106, 4, 380).fill(C.royalBlue);
+
+    doc.font('Helvetica-Bold').fontSize(11).fillColor(C.royalBlue).text('ARCHITECTURAL BENCHMARKS', 620, 124);
 
     const benchmarks = [
       { stat: '< 150 ms', desc: 'STOMP WebSocket Alert Latency' },
@@ -234,36 +279,12 @@ function createPresentationPDF() {
       { stat: 'Offline First', desc: 'Auto-syncing LocalStorage Queue' }
     ];
 
-    let bY = 165;
-    benchmarks.forEach(b => {
-      doc.font('Helvetica-Bold').fontSize(22).fillColor(C.textWhite).text(b.stat, 620, bY);
-      doc.font('Helvetica').fontSize(10).fillColor(C.textLight).text(b.desc, 620, bY + 28);
-      bY += 75;
-    });
-  }
-
-  // Helper function for Screenshot slides
-  function addScreenshotSlide(cat, title, sub, bullets, imgName, slideNum) {
-    applyHeaderFooter(cat, title, sub, slideNum);
-
-    // Left Column: Text & Features
-    doc.roundedRect(50, 110, 420, 370, 8).lineWidth(1).fillAndStroke(C.bgCard, C.bgCardBorder);
-    doc.font('Helvetica-Bold').fontSize(11).fillColor(C.accentCyan).text('CORE FUNCTIONALITY & WORKFLOW', 70, 128);
-
     let bY = 160;
-    bullets.forEach(b => {
-      doc.font('Helvetica-Bold').fontSize(10.5).fillColor(C.textWhite).text(`• ${b.h}:`, 70, bY);
-      doc.font('Helvetica').fontSize(9.5).fillColor(C.textLight).text(b.d, 70, bY + 14, { width: 380, lineGap: 3 });
-      bY += 70;
+    benchmarks.forEach(b => {
+      doc.font('Helvetica-Bold').fontSize(22).fillColor(C.primaryNavy).text(b.stat, 620, bY);
+      doc.font('Helvetica').fontSize(10).fillColor(C.textBody).text(b.desc, 620, bY + 28);
+      bY += 76;
     });
-
-    // Right Column: Framed Screenshot
-    doc.roundedRect(490, 110, 420, 370, 8).lineWidth(1.5).fillAndStroke(C.bgCard, C.accentBlue);
-
-    const imgPath = path.resolve('screenshots/' + imgName);
-    if (fs.existsSync(imgPath)) {
-      doc.image(imgPath, 500, 120, { width: 400, height: 350, fit: [400, 350], align: 'center', valign: 'center' });
-    }
   }
 
   // ==========================================
@@ -277,7 +298,7 @@ function createPresentationPDF() {
       { h: 'Real-Time Campus Metrics', d: 'Visual KPI cards monitoring registered residential units, active residents, on-duty security staff, and monthly billing totals.' },
       { h: 'Live Gatehouse Traffic Feed', d: 'Streaming monitor of active gate entries, pending resident approvals, and recent checkouts with sub-second WebSocket synchronization.' },
       { h: 'Rapid Operational Shortcuts', d: '1-tap access to visitor registries, staff management, resident directory, maintenance ledger, and campus broadcast dispatches.' },
-      { h: 'Multi-Tenant Scoping', d: 'Strict role-based isolation guarantees that committee members only view statistics belonging to their society.' }
+      { h: 'Multi-Tenant Scoping', d: 'Strict role-based isolation guarantees that committee members only view statistics belonging to their society complex.' }
     ],
     'actual_gatesync_dashboard_dark.png',
     4
@@ -394,8 +415,7 @@ function createPresentationPDF() {
     const secBoxes = [
       {
         title: 'ZERO-TRUST JWT SECURITY',
-        icon: 'SHIELD',
-        col: C.accentCyan,
+        col: C.royalBlue,
         points: [
           '15-Minute rotating JWT access tokens kept in-memory (XSS immune).',
           'Secure HttpOnly SameSite=Strict cookies for refresh tokens.',
@@ -405,8 +425,7 @@ function createPresentationPDF() {
       },
       {
         title: 'OFFLINE-FIRST PWA RESILIENCE',
-        icon: 'LIGHTNING',
-        col: C.accentBlue,
+        col: C.primaryNavy,
         points: [
           'Service Worker precaches assets for 100% offline application startup.',
           'Offline Transaction Queue stores visitor entries in LocalStorage.',
@@ -416,8 +435,7 @@ function createPresentationPDF() {
       },
       {
         title: 'AUDITING & EMERGENCY SOS',
-        icon: 'ALERT',
-        col: C.accentEmerald,
+        col: C.successGreen,
         points: [
           'Immutable audit logging capturing actor ID, IP address, and payload.',
           '2-Second deduplication key window prevents duplicate alert spam.',
@@ -429,13 +447,15 @@ function createPresentationPDF() {
 
     let sX = 50;
     secBoxes.forEach(b => {
-      doc.roundedRect(sX, 110, 266, 370, 8).lineWidth(1.5).fillAndStroke(C.bgCard, b.col);
-      doc.font('Helvetica-Bold').fontSize(10.5).fillColor(b.col).text(b.title, sX + 15, 128);
+      doc.roundedRect(sX, 106, 266, 380, 6).lineWidth(1).fillAndStroke(C.cardBg, C.cardBorder);
+      doc.rect(sX, 106, 4, 380).fill(b.col);
 
-      let pY = 165;
+      doc.font('Helvetica-Bold').fontSize(10.5).fillColor(b.col).text(b.title, sX + 18, 124);
+
+      let pY = 160;
       b.points.forEach(pt => {
-        doc.font('Helvetica-Bold').fontSize(9.5).fillColor(C.textWhite).text('•', sX + 15, pY);
-        doc.font('Helvetica').fontSize(9).fillColor(C.textLight).text(pt, sX + 28, pY, { width: 220, lineGap: 3 });
+        doc.font('Helvetica-Bold').fontSize(9.5).fillColor(b.col).text('•', sX + 18, pY);
+        doc.font('Helvetica').fontSize(9).fillColor(C.textBody).text(pt, sX + 30, pY, { width: 220, lineGap: 3 });
         pY += 68;
       });
 
@@ -448,25 +468,27 @@ function createPresentationPDF() {
   // ==========================================
   {
     doc.addPage({ size: [960, 540], margins: { top: 0, bottom: 0, left: 0, right: 0 } });
-    doc.rect(0, 0, 960, 540).fill(C.bgDark);
+    doc.rect(0, 0, 960, 540).fill(C.bgLight);
 
     // Decorative top accent line
-    doc.rect(0, 0, 960, 8).fill(C.accentCyan);
+    doc.rect(0, 0, 960, 6).fill(C.royalBlue);
 
     // Thank You Title
     doc.font('Helvetica-Bold')
-       .fontSize(46)
-       .fillColor(C.textWhite)
-       .text('THANK YOU', 60, 48, { characterSpacing: 2 });
+       .fontSize(38)
+       .fillColor(C.primaryNavy)
+       .text('THANK YOU', 60, 42);
 
     doc.font('Helvetica-Bold')
-       .fontSize(15)
-       .fillColor(C.accentCyan)
-       .text('GateSync — Smart Society Security Platform  |  Evaluation & Discussion', 60, 110);
+       .fontSize(14)
+       .fillColor(C.royalBlue)
+       .text('GateSync — Smart Society Security Platform  |  Evaluation & Discussion', 60, 90);
 
     // Live Deployment Card
-    doc.roundedRect(60, 142, 840, 185, 8).lineWidth(1.5).fillAndStroke(C.bgCard, C.accentBlue);
-    doc.font('Helvetica-Bold').fontSize(11).fillColor(C.accentCyan).text('LIVE DELIVERABLES & PRODUCTION CLOUD ENDPOINTS', 85, 160);
+    doc.roundedRect(60, 120, 840, 172, 6).lineWidth(1).fillAndStroke(C.cardBg, C.cardBorder);
+    doc.rect(60, 120, 4, 172).fill(C.royalBlue);
+
+    doc.font('Helvetica-Bold').fontSize(10.5).fillColor(C.royalBlue).text('LIVE DELIVERABLES & PRODUCTION CLOUD ENDPOINTS', 80, 134);
 
     const links = [
       { label: 'Live Progressive Web App (PWA):', url: 'https://arpitthakor28.github.io/sms1/', note: 'Installable mobile/desktop frontend' },
@@ -475,41 +497,42 @@ function createPresentationPDF() {
       { label: 'GitHub Source Code Repository:', url: 'https://github.com/arpitthakor28/sms1', note: 'Full-stack source with reports & slides' }
     ];
 
-    let lY = 186;
+    let lY = 158;
     links.forEach(l => {
-      doc.font('Helvetica-Bold').fontSize(9.5).fillColor(C.textWhite).text(`• ${l.label}`, 85, lY);
-      doc.font('Helvetica-Bold').fontSize(9.5).fillColor(C.accentCyan).text(l.url, 330, lY);
+      doc.font('Helvetica-Bold').fontSize(9.5).fillColor(C.textDark).text(`•  ${l.label}`, 80, lY);
+      doc.font('Helvetica-Bold').fontSize(9.5).fillColor(C.royalBlue).text(l.url, 310, lY);
       doc.font('Helvetica').fontSize(8.5).fillColor(C.textMuted).text(`(${l.note})`, 670, lY);
-      lY += 30;
+      lY += 28;
     });
 
     // Student Credentials Card
-    doc.roundedRect(60, 345, 840, 140, 8).lineWidth(1).fillAndStroke(C.bgCard, C.bgCardBorder);
+    doc.roundedRect(60, 310, 840, 178, 6).lineWidth(1).fillAndStroke(C.cardBg, C.cardBorder);
+    doc.rect(60, 310, 4, 178).fill(C.primaryNavy);
 
     // Left Column
-    doc.font('Helvetica-Bold').fontSize(9.5).fillColor(C.accentCyan).text('PROJECT DEVELOPED BY:', 85, 362);
-    doc.font('Helvetica-Bold').fontSize(15).fillColor(C.textWhite).text('ARPITSINH THAKOR', 85, 378);
-    doc.font('Helvetica-Bold').fontSize(12).fillColor(C.accentCyan).text('Enrollment Number: 23SE02IE040', 85, 400);
-    doc.font('Helvetica').fontSize(10.5).fillColor(C.textLight).text('B.Tech in Information Technology & Engineering', 85, 420);
-    doc.font('Helvetica-Bold').fontSize(9.5).fillColor(C.accentEmerald).text('Technology Focus: Full Stack Development - Java', 85, 438);
+    doc.font('Helvetica-Bold').fontSize(8.5).fillColor(C.textMuted).text('PROJECT DEVELOPED BY', 85, 326);
+    doc.font('Helvetica-Bold').fontSize(16).fillColor(C.textDark).text('ARPITSINH THAKOR', 85, 342);
+    doc.font('Helvetica-Bold').fontSize(12).fillColor(C.royalBlue).text('Enrollment Number: 23SE02IE040', 85, 366);
+    doc.font('Helvetica').fontSize(10.5).fillColor(C.textBody).text('B.Tech in Information Technology & Engineering', 85, 386);
+    doc.font('Helvetica-Bold').fontSize(10.5).fillColor(C.successGreen).text('Technology Focus: Full Stack Development - Java', 85, 406);
 
     // Right Column
-    doc.font('Helvetica-Bold').fontSize(9.5).fillColor(C.accentCyan).text('DEPARTMENT & INSTITUTION:', 520, 362);
-    doc.font('Helvetica-Bold').fontSize(13).fillColor(C.textWhite).text('School of Engineering', 520, 378);
-    doc.font('Helvetica').fontSize(10.5).fillColor(C.textLight).text('P. P. Savani University, Surat, Gujarat', 520, 396);
-    doc.font('Helvetica-Bold').fontSize(11).fillColor(C.accentCyan).text('Final Year Project  •  Academic Year 2026–2027', 520, 420);
+    doc.font('Helvetica-Bold').fontSize(8.5).fillColor(C.textMuted).text('DEPARTMENT & INSTITUTION', 520, 326);
+    doc.font('Helvetica-Bold').fontSize(13).fillColor(C.textDark).text('School of Engineering', 520, 342);
+    doc.font('Helvetica').fontSize(10.5).fillColor(C.textBody).text('P. P. Savani University, Surat, Gujarat', 520, 360);
+    doc.font('Helvetica-Bold').fontSize(11).fillColor(C.royalBlue).text('Final Year Project  •  Academic Year 2026–2027', 520, 384);
 
     // Footer
     doc.font('Helvetica')
        .fontSize(8.5)
        .fillColor(C.textMuted)
-       .text('GATESYNC • Smart Residential Security Platform  |  All Rights Reserved © 2026–2027', 60, 514);
+       .text('GATESYNC • Smart Residential Security Platform  |  All Rights Reserved © 2026–2027', 60, 515);
   }
 
   doc.end();
 
   stream.on('finish', () => {
-    console.log(`Presentation PDF generated successfully: ${outputPath}`);
+    console.log(`White Executive Presentation PDF generated successfully: ${outputPath}`);
 
     // Copy to Downloads, public, and docs
     const dlPath = 'c:\\Users\\ASUS\\Downloads\\GateSync_Project_Presentation.pdf';
@@ -533,4 +556,4 @@ function createPresentationPDF() {
   });
 }
 
-createPresentationPDF();
+createWhiteExecutivePresentationPDF();

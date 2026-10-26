@@ -2,103 +2,113 @@ const pptxgen = require('pptxgenjs');
 const path = require('path');
 const fs = require('fs');
 
-async function createPresentation() {
+async function createWhiteExecutivePresentationPPTX() {
   const pres = new pptxgen();
   pres.layout = 'LAYOUT_16x9'; // 10 x 5.625 inches
   pres.author = 'Arpitsinh Thakor (23SE02IE040)';
   pres.title = 'GATESYNC - Smart Residential Security & Visitor Management Platform';
   pres.company = 'School of Engineering, P. P. Savani University';
 
-  // Cold temperature color palette (Matching Second PPT)
+  // Professional White & Cold Executive Palette
   const C = {
-    bgDark: '0B132B',       // Deepest navy
-    bgCard: '162238',       // Cold slate card background
-    bgCardBorder: '243656', // Cool slate outline
-    accentCyan: '38BDF8',   // Icy cyan highlight
-    accentBlue: '0284C7',   // Cold vibrant sky blue
-    accentEmerald: '10B981',// Mint confirmation
-    accentPurple: 'A855F7', // Royal purple accent
-    accentRed: 'EF4444',    // Danger / Problem red
-    textWhite: 'FFFFFF',    // Crisp white
-    textLight: 'CBD5E1',    // Cool silver text
-    textMuted: '94A3B8',    // Slate gray
+    bgLight: 'F8FAFC',       // Clean executive off-white background
+    cardBg: 'FFFFFF',        // Pure white card container
+    cardBorder: 'E2E8F0',    // Subtle soft cool slate border
+    primaryNavy: '0F2942',   // Deep authoritative navy for titles
+    royalBlue: '1E40AF',     // Professional academic royal blue
+    accentBlue: '0284C7',    // Tech blue accent
+    textDark: '0F172A',      // High-contrast charcoal headings
+    textBody: '334155',      // Clean readable slate body text
+    textMuted: '64748B',     // Cool slate metadata
+    alertRed: 'DC2626',      // Corporate danger red
+    successGreen: '16A34A',  // Corporate success green
+    headerDivider: 'E2E8F0'  // Clean divider line
   };
 
-  // Helper for slide common header and footer
-  function applyColdSlideHeader(slide, category, title, subtitle, slideNum) {
-    slide.background = { color: C.bgDark };
+  // Helper for slide common header and footer (NO awkward pill badges)
+  function applyHeaderFooter(slide, category, title, subtitle, slideNum) {
+    slide.background = { color: C.bgLight };
 
-    // Top icy accent bar
+    // Top Royal Blue Accent Line
     slide.addShape(pres.ShapeType.rect, {
-      x: 0, y: 0, w: 10, h: 0.06,
-      fill: { color: C.accentBlue },
-      line: { color: C.accentBlue, width: 0 }
+      x: 0, y: 0, w: 10, h: 0.05,
+      fill: { color: C.royalBlue },
+      line: { color: C.royalBlue, width: 0 }
     });
 
-    // Category / Breadcrumb
+    // Section Breadcrumb - Clean Human Typography
     slide.addText(category.toUpperCase(), {
-      x: 0.6, y: 0.28, w: 8.8, h: 0.22,
-      fontSize: 9.5, fontFace: 'Calibri', color: C.accentCyan, bold: true
+      x: 0.6, y: 0.24, w: 6.0, h: 0.22,
+      fontSize: 8.5, fontFace: 'Calibri', color: C.royalBlue, bold: true
     });
 
     // Slide Title
     slide.addText(title, {
-      x: 0.6, y: 0.5, w: 8.8, h: 0.42,
-      fontSize: 20, fontFace: 'Calibri', color: C.textWhite, bold: true
+      x: 0.6, y: 0.46, w: 8.8, h: 0.38,
+      fontSize: 18, fontFace: 'Calibri', color: C.primaryNavy, bold: true
     });
 
-    // Slide Subtitle
+    // Subtitle
     if (subtitle) {
       slide.addText(subtitle, {
-        x: 0.6, y: 0.92, w: 8.8, h: 0.25,
-        fontSize: 10.5, fontFace: 'Calibri', color: C.textMuted
+        x: 0.6, y: 0.84, w: 8.8, h: 0.22,
+        fontSize: 9.5, fontFace: 'Calibri', color: C.textMuted
       });
     }
 
-    // Bottom subtle line & footer
+    // Header divider line
     slide.addShape(pres.ShapeType.rect, {
-      x: 0.6, y: 5.2, w: 8.8, h: 0.01,
-      fill: { color: C.bgCardBorder },
-      line: { color: C.bgCardBorder, width: 0 }
+      x: 0.6, y: 1.1, w: 8.8, h: 0.01,
+      fill: { color: C.headerDivider },
+      line: { color: C.headerDivider, width: 0 }
     });
 
-    slide.addText('GATESYNC • Smart Residential Security Platform  |  Arpitsinh Thakor (23SE02IE040)', {
+    // Footer divider line
+    slide.addShape(pres.ShapeType.rect, {
+      x: 0.6, y: 5.2, w: 8.8, h: 0.01,
+      fill: { color: C.headerDivider },
+      line: { color: C.headerDivider, width: 0 }
+    });
+
+    // Footer text left
+    slide.addText('GateSync — Smart Society Security System  |  Arpitsinh Thakor (23SE02IE040)', {
       x: 0.6, y: 5.25, w: 6.5, h: 0.22,
       fontSize: 8.5, fontFace: 'Calibri', color: C.textMuted
     });
 
+    // Footer text right
     slide.addText(`SCHOOL OF ENGINEERING  •  SLIDE ${slideNum} / 12`, {
       x: 7.2, y: 5.25, w: 2.2, h: 0.22,
-      fontSize: 8.5, fontFace: 'Calibri', color: C.accentCyan, bold: true, align: 'right'
+      fontSize: 8.5, fontFace: 'Calibri', color: C.royalBlue, bold: true, align: 'right'
     });
   }
 
   // Helper function for Screenshot slides
   function addScreenshotSlide(cat, title, sub, bullets, imgName, slideNum) {
     const slide = pres.addSlide();
-    applyColdSlideHeader(slide, cat, title, sub, slideNum);
+    applyHeaderFooter(slide, cat, title, sub, slideNum);
 
     // Left Column: Features Card
     slide.addShape(pres.ShapeType.rect, {
       x: 0.6, y: 1.25, w: 4.15, h: 3.8,
-      fill: { color: C.bgCard },
-      line: { color: C.bgCardBorder, width: 1 }
+      fill: { color: C.cardBg },
+      line: { color: C.cardBorder, width: 1 }
     });
     slide.addShape(pres.ShapeType.rect, {
       x: 0.6, y: 1.25, w: 0.08, h: 3.8,
-      fill: { color: C.accentCyan },
-      line: { color: C.accentCyan, width: 0 }
+      fill: { color: C.royalBlue },
+      line: { color: C.royalBlue, width: 0 }
     });
 
     slide.addText('CORE FUNCTIONALITY & WORKFLOW', {
       x: 0.85, y: 1.4, w: 3.75, h: 0.25,
-      fontSize: 10.5, fontFace: 'Calibri', color: C.accentCyan, bold: true
+      fontSize: 10.5, fontFace: 'Calibri', color: C.royalBlue, bold: true
     });
 
     let textRuns = [];
     bullets.forEach(b => {
-      textRuns.push({ text: `• ${b.h}:\n`, options: { bold: true, color: C.textWhite } });
-      textRuns.push({ text: `${b.d}\n\n`, options: { color: C.textLight } });
+      textRuns.push({ text: `• ${b.h}:\n`, options: { bold: true, color: C.textDark } });
+      textRuns.push({ text: `${b.d}\n\n`, options: { color: C.textBody } });
     });
 
     slide.addText(textRuns, {
@@ -106,16 +116,16 @@ async function createPresentation() {
       fontSize: 8.5, fontFace: 'Calibri'
     });
 
-    // Right Column: Framed Screenshot
+    // Right Column: Framed Screenshot Card
     slide.addShape(pres.ShapeType.rect, {
       x: 4.95, y: 1.25, w: 4.45, h: 3.8,
-      fill: { color: C.bgCard },
-      line: { color: C.accentBlue, width: 1 }
+      fill: { color: C.cardBg },
+      line: { color: C.cardBorder, width: 1 }
     });
 
     const imgPath = path.resolve('screenshots/' + imgName);
     if (fs.existsSync(imgPath)) {
-      slide.addImage({ path: imgPath, x: 5.05, y: 1.4, w: 4.25, h: 3.5 });
+      slide.addImage({ path: imgPath, x: 5.05, y: 1.35, w: 4.25, h: 3.6 });
     }
   }
 
@@ -124,24 +134,24 @@ async function createPresentation() {
   // ==========================================
   {
     const slide = pres.addSlide();
-    slide.background = { color: C.bgDark };
+    slide.background = { color: C.bgLight };
 
-    // Decorative icy top line
+    // Top Royal Blue Accent Bar
     slide.addShape(pres.ShapeType.rect, {
       x: 0, y: 0, w: 10, h: 0.08,
-      fill: { color: C.accentCyan },
-      line: { color: C.accentCyan, width: 0 }
+      fill: { color: C.royalBlue },
+      line: { color: C.royalBlue, width: 0 }
     });
 
-    // Institutional Banner Badge
+    // University Header Line
     slide.addShape(pres.ShapeType.rect, {
-      x: 0.6, y: 0.35, w: 5.0, h: 0.35,
-      fill: { color: C.bgCard },
-      line: { color: C.bgCardBorder, width: 1 }
+      x: 0.6, y: 0.36, w: 0.05, h: 0.22,
+      fill: { color: C.royalBlue },
+      line: { color: C.royalBlue, width: 0 }
     });
-    slide.addText('P. P. SAVANI UNIVERSITY • SCHOOL OF ENGINEERING', {
-      x: 0.75, y: 0.4, w: 4.7, h: 0.25,
-      fontSize: 10, fontFace: 'Calibri', color: C.accentCyan, bold: true
+    slide.addText('P. P. SAVANI UNIVERSITY  •  SCHOOL OF ENGINEERING', {
+      x: 0.72, y: 0.36, w: 6.0, h: 0.24,
+      fontSize: 10.5, fontFace: 'Calibri', color: C.primaryNavy, bold: true
     });
 
     // University Logo
@@ -150,57 +160,63 @@ async function createPresentation() {
       slide.addImage({ path: logoPath, x: 7.8, y: 0.3, w: 1.6, h: 0.65 });
     }
 
-    // Main Project Name
+    // Main Project Title
     slide.addText('GATESYNC', {
-      x: 0.6, y: 0.85, w: 8.8, h: 0.65,
-      fontSize: 44, fontFace: 'Calibri', color: C.textWhite, bold: true
+      x: 0.6, y: 0.8, w: 8.8, h: 0.65,
+      fontSize: 40, fontFace: 'Calibri', color: C.primaryNavy, bold: true
     });
 
     // Subtitle
-    slide.addText('Smart Gated Community Security & Real-Time Visitor Management Platform', {
-      x: 0.6, y: 1.48, w: 8.8, h: 0.3,
-      fontSize: 15, fontFace: 'Calibri', color: C.accentCyan, bold: true
+    slide.addText('Smart Residential Society Security & Visitor Management System', {
+      x: 0.6, y: 1.42, w: 8.8, h: 0.3,
+      fontSize: 15, fontFace: 'Calibri', color: C.royalBlue, bold: true
     });
 
+    // Abstract
     slide.addText('An enterprise-grade, offline-first Progressive Web Application (PWA) replacing legacy paper visitor registers with sub-150ms bidirectional STOMP WebSocket gatekeeper alerts, 1-tap logistics clearance, and cryptographic guest access.', {
-      x: 0.6, y: 1.82, w: 8.8, h: 0.55,
-      fontSize: 10, fontFace: 'Calibri', color: C.textLight
+      x: 0.6, y: 1.76, w: 8.8, h: 0.55,
+      fontSize: 10, fontFace: 'Calibri', color: C.textBody
     });
 
-    // Credentials Card Container
+    // Credentials Container Card (Pure white card with navy stripe)
     slide.addShape(pres.ShapeType.rect, {
-      x: 0.6, y: 2.5, w: 8.8, h: 2.45,
-      fill: { color: C.bgCard },
-      line: { color: C.accentBlue, width: 1.5 }
+      x: 0.6, y: 2.45, w: 8.8, h: 2.5,
+      fill: { color: C.cardBg },
+      line: { color: C.cardBorder, width: 1 }
+    });
+    slide.addShape(pres.ShapeType.rect, {
+      x: 0.6, y: 2.45, w: 0.08, h: 2.5,
+      fill: { color: C.primaryNavy },
+      line: { color: C.primaryNavy, width: 0 }
     });
 
-    // Details Inside Card: Left Column
+    // Left Column: Student Credentials
     slide.addText([
-      { text: 'DEVELOPED & PRESENTED BY:\n', options: { fontSize: 9, color: C.accentCyan, bold: true } },
-      { text: 'ARPITSINH THAKOR\n\n', options: { fontSize: 16, color: C.textWhite, bold: true } },
-      { text: 'ENROLLMENT NUMBER:\n', options: { fontSize: 9, color: C.accentCyan, bold: true } },
-      { text: '23SE02IE040\n\n', options: { fontSize: 14, color: C.textWhite, bold: true } },
-      { text: 'ACADEMIC PROGRAM:\n', options: { fontSize: 9, color: C.accentCyan, bold: true } },
-      { text: 'B.Tech in Information Technology & Engineering\n', options: { fontSize: 11, color: C.textLight, bold: true } },
-      { text: 'School of Engineering\n\n', options: { fontSize: 10, color: C.textMuted } },
-      { text: 'TECHNOLOGY FOCUS:  ', options: { fontSize: 9, color: C.accentCyan, bold: true } },
-      { text: 'Full Stack Development - Java', options: { fontSize: 11, color: C.accentEmerald, bold: true } }
+      { text: 'STUDENT DEVELOPER\n', options: { fontSize: 8.5, color: C.textMuted, bold: true } },
+      { text: 'ARPITSINH THAKOR\n\n', options: { fontSize: 16, color: C.textDark, bold: true } },
+      { text: 'ENROLLMENT NUMBER\n', options: { fontSize: 8.5, color: C.textMuted, bold: true } },
+      { text: '23SE02IE040\n\n', options: { fontSize: 14, color: C.royalBlue, bold: true } },
+      { text: 'DEGREE & BRANCH\n', options: { fontSize: 8.5, color: C.textMuted, bold: true } },
+      { text: 'B.Tech in Information Technology & Engineering\n', options: { fontSize: 11, color: C.textDark, bold: true } },
+      { text: 'School of Engineering\n\n', options: { fontSize: 10, color: C.textBody } },
+      { text: 'TECHNOLOGY FOCUS:  ', options: { fontSize: 8.5, color: C.textMuted, bold: true } },
+      { text: 'Full Stack Development - Java', options: { fontSize: 11, color: C.successGreen, bold: true } }
     ], {
-      x: 0.85, y: 2.65, w: 4.2, h: 2.15, fontFace: 'Calibri'
+      x: 0.85, y: 2.6, w: 4.2, h: 2.2, fontFace: 'Calibri'
     });
 
-    // Details Inside Card: Right Column
+    // Right Column: Institution & Academic Details
     slide.addText([
-      { text: 'ACADEMIC INSTITUTION:\n', options: { fontSize: 9, color: C.accentCyan, bold: true } },
-      { text: 'School of Engineering\n', options: { fontSize: 13, color: C.textWhite, bold: true } },
-      { text: 'P. P. Savani University, Surat, Gujarat\n\n', options: { fontSize: 10, color: C.textLight } },
-      { text: 'PROJECT CATEGORY:\n', options: { fontSize: 9, color: C.accentCyan, bold: true } },
-      { text: 'Final Year Project\n\n', options: { fontSize: 14, color: C.textWhite, bold: true } },
-      { text: 'ACADEMIC YEAR:\n', options: { fontSize: 9, color: C.accentCyan, bold: true } },
-      { text: 'Academic Year 2026–2027\n', options: { fontSize: 13, color: C.accentCyan, bold: true } },
+      { text: 'INSTITUTION\n', options: { fontSize: 8.5, color: C.textMuted, bold: true } },
+      { text: 'School of Engineering\n', options: { fontSize: 13, color: C.textDark, bold: true } },
+      { text: 'P. P. Savani University, Surat, Gujarat, India\n\n', options: { fontSize: 10, color: C.textBody } },
+      { text: 'PROJECT CATEGORY\n', options: { fontSize: 8.5, color: C.textMuted, bold: true } },
+      { text: 'Final Year Project\n\n', options: { fontSize: 14, color: C.textDark, bold: true } },
+      { text: 'ACADEMIC YEAR\n', options: { fontSize: 8.5, color: C.textMuted, bold: true } },
+      { text: 'Academic Year 2026–2027\n', options: { fontSize: 13, color: C.royalBlue, bold: true } },
       { text: 'Major Project Presentation (AY 2026–2027)', options: { fontSize: 9.5, color: C.textMuted } }
     ], {
-      x: 5.3, y: 2.65, w: 3.9, h: 2.15, fontFace: 'Calibri'
+      x: 5.3, y: 2.6, w: 3.9, h: 2.2, fontFace: 'Calibri'
     });
   }
 
@@ -209,55 +225,65 @@ async function createPresentation() {
   // ==========================================
   {
     const slide = pres.addSlide();
-    applyColdSlideHeader(slide, '01. Background & Challenges', 'Problem Statement & Motivation', 'Why Traditional Physical Gatehouse Registers Fail in Modern Residential Societies', 2);
+    applyHeaderFooter(slide, '01. Background & Challenges', 'Problem Statement & Motivation', 'Why Traditional Physical Gatehouse Registers Fail in Modern Residential Societies', 2);
 
-    // Left Column: The Problem (Legacy Systems)
+    // Left Column: The Problem
     slide.addShape(pres.ShapeType.rect, {
       x: 0.6, y: 1.25, w: 4.25, h: 3.8,
-      fill: { color: C.bgCard },
-      line: { color: C.accentRed, width: 1.5 }
+      fill: { color: C.cardBg },
+      line: { color: C.cardBorder, width: 1 }
+    });
+    slide.addShape(pres.ShapeType.rect, {
+      x: 0.6, y: 1.25, w: 0.08, h: 3.8,
+      fill: { color: C.alertRed },
+      line: { color: C.alertRed, width: 0 }
     });
 
     slide.addText('CRITICAL CHALLENGES IN PAPER LOGBOOKS', {
       x: 0.85, y: 1.4, w: 3.85, h: 0.28,
-      fontSize: 11, fontFace: 'Calibri', color: 'F87171', bold: true
+      fontSize: 11, fontFace: 'Calibri', color: C.alertRed, bold: true
     });
 
     slide.addText([
-      { text: '• Severe Gate Congestion: ', options: { bold: true, color: C.textWhite } },
-      { text: 'Manual pen-and-paper logging causes 3–5 min entry delays per vehicle during rush hours.\n\n', options: { color: C.textLight } },
-      { text: '• Privacy Leaks: ', options: { bold: true, color: C.textWhite } },
-      { text: 'Resident flat numbers and visitor phone numbers sit exposed in open paper ledgers.\n\n', options: { color: C.textLight } },
-      { text: '• No Real-Time Verification: ', options: { bold: true, color: C.textWhite } },
-      { text: 'Guards rely on intercoms or phone calls that go unanswered, leading to unverified entry.\n\n', options: { color: C.textLight } },
-      { text: '• E-Commerce Logistics Surges: ', options: { bold: true, color: C.textWhite } },
-      { text: 'Frequent deliveries (Swiggy, Zomato, Amazon, Blinkit) overwhelm gatekeepers with repetitive typing.', options: { color: C.textLight } }
+      { text: '•  Severe Gate Congestion: ', options: { bold: true, color: C.textDark } },
+      { text: 'Manual pen-and-paper logging causes 3–5 min entry delays per vehicle during rush hours.\n\n', options: { color: C.textBody } },
+      { text: '•  Privacy Leaks: ', options: { bold: true, color: C.textDark } },
+      { text: 'Resident flat numbers and visitor phone numbers sit exposed in open paper ledgers.\n\n', options: { color: C.textBody } },
+      { text: '•  No Real-Time Verification: ', options: { bold: true, color: C.textDark } },
+      { text: 'Guards rely on intercoms or phone calls that go unanswered, leading to unverified entry.\n\n', options: { color: C.textBody } },
+      { text: '•  E-Commerce Logistics Surges: ', options: { bold: true, color: C.textDark } },
+      { text: 'Frequent deliveries (Swiggy, Zomato, Amazon, Blinkit) overwhelm gatekeepers with repetitive typing.', options: { color: C.textBody } }
     ], {
       x: 0.85, y: 1.75, w: 3.85, h: 3.15,
       fontSize: 9, fontFace: 'Calibri'
     });
 
-    // Right Column: The Solution (GateSync)
+    // Right Column: The Solution
     slide.addShape(pres.ShapeType.rect, {
       x: 5.15, y: 1.25, w: 4.25, h: 3.8,
-      fill: { color: C.bgCard },
-      line: { color: C.accentCyan, width: 1.5 }
+      fill: { color: C.cardBg },
+      line: { color: C.cardBorder, width: 1 }
+    });
+    slide.addShape(pres.ShapeType.rect, {
+      x: 5.15, y: 1.25, w: 0.08, h: 3.8,
+      fill: { color: C.successGreen },
+      line: { color: C.successGreen, width: 0 }
     });
 
     slide.addText('THE GATESYNC DIGITAL TRANSFORMATION', {
       x: 5.4, y: 1.4, w: 3.85, h: 0.28,
-      fontSize: 11, fontFace: 'Calibri', color: C.accentCyan, bold: true
+      fontSize: 11, fontFace: 'Calibri', color: C.successGreen, bold: true
     });
 
     slide.addText([
-      { text: '• Sub-150ms Instant Push Alerting: ', options: { bold: true, color: C.textWhite } },
-      { text: 'Bidirectional STOMP WebSockets push arrival alerts straight to the resident mobile screen before visitor reaches barrier.\n\n', options: { color: C.textLight } },
-      { text: '• 1-Tap Resident Remote Approvals: ', options: { bold: true, color: C.textWhite } },
-      { text: 'Residents verify visitor identity with arrival photo and tap Approve or Deny from anywhere in the world.\n\n', options: { color: C.textLight } },
-      { text: '• Pre-Approved QR & 6-Digit Passes: ', options: { bold: true, color: C.textWhite } },
-      { text: 'Residents generate digital passes in advance for expected guests. Guards verify in 2 seconds via optical QR scanning.\n\n', options: { color: C.textLight } },
-      { text: '• 1-Tap Logistics Partner Clearing: ', options: { bold: true, color: C.textWhite } },
-      { text: 'Dedicated 1-tap fast ingress for Swiggy, Zomato, Amazon, and Blinkit completely eliminates typing bottlenecks.', options: { color: C.textLight } }
+      { text: '•  Sub-150ms Instant Push Alerting: ', options: { bold: true, color: C.textDark } },
+      { text: 'Bidirectional STOMP WebSockets push arrival alerts straight to the resident mobile screen before visitor reaches barrier.\n\n', options: { color: C.textBody } },
+      { text: '•  1-Tap Resident Remote Approvals: ', options: { bold: true, color: C.textDark } },
+      { text: 'Residents verify visitor identity with arrival photo and tap Approve or Deny from anywhere in the world.\n\n', options: { color: C.textBody } },
+      { text: '•  Pre-Approved QR & 6-Digit Passes: ', options: { bold: true, color: C.textDark } },
+      { text: 'Residents generate digital passes in advance for expected guests. Guards verify in 2 seconds via optical QR scanning.\n\n', options: { color: C.textBody } },
+      { text: '•  1-Tap Logistics Partner Clearing: ', options: { bold: true, color: C.textDark } },
+      { text: 'Dedicated 1-tap fast ingress for Swiggy, Zomato, Amazon, and Blinkit completely eliminates typing bottlenecks.', options: { color: C.textBody } }
     ], {
       x: 5.4, y: 1.75, w: 3.85, h: 3.15,
       fontSize: 9, fontFace: 'Calibri'
@@ -269,21 +295,26 @@ async function createPresentation() {
   // ==========================================
   {
     const slide = pres.addSlide();
-    applyColdSlideHeader(slide, '02. Engineering Architecture', 'Full-Stack Architecture & Technology Stack', 'Robust Multi-Tier Cloud Architecture Built for Real-Time Responsiveness and Zero Data Loss', 3);
+    applyHeaderFooter(slide, '02. Engineering Architecture', 'Full-Stack Architecture & Technology Stack', 'Robust Multi-Tier Cloud Architecture Built for Real-Time Responsiveness and Zero Data Loss', 3);
 
     const tiers = [
-      { name: 'CLIENT PRESENTATION TIER (PWA)', col: C.accentCyan, tech: 'React 19 • Vite • Lucide Icons • STOMP over SockJS • Service Worker Precaching', desc: 'Installable Progressive Web App (PWA) with responsive layouts, offline transaction queue, and audible chime notifications.' },
-      { name: 'BACKEND MICROSERVICE CORE (JAVA)', col: C.accentBlue, tech: 'Java 21 LTS • Spring Boot 3.3.4 • Spring Security 6 • JJWT • RESTful APIs', desc: 'Stateless multi-tenant controllers, WebSocket message broker (/topic and /user/queue), and atomic concurrency locks.' },
-      { name: 'DUAL-DATABASE PERSISTENCE STRATEGY', col: C.accentEmerald, tech: 'MongoDB Atlas Cloud (Distributed NoSQL) + Relational Enterprise Mapping', desc: 'MongoDB Atlas stores high-throughput notifications, pre-approved passes, and audit trails; robust relational schemas for billing.' },
-      { name: 'CLOUD DEPLOYMENT & CI/CD INFRASTRUCTURE', col: C.accentPurple, tech: 'Render Cloud (Dockerized Spring Boot Container) + GitHub Pages (Production PWA)', desc: 'Fully automated continuous deployment with sub-second health monitors (/api/health) and automated failovers.' }
+      { name: 'CLIENT PRESENTATION TIER (PWA)', col: C.royalBlue, tech: 'React 19 • Vite • Lucide Icons • STOMP over SockJS • Service Worker Precaching', desc: 'Installable Progressive Web App (PWA) with responsive layouts, offline transaction queue, and audible chime notifications.' },
+      { name: 'BACKEND MICROSERVICE CORE (JAVA)', col: C.primaryNavy, tech: 'Java 21 LTS • Spring Boot 3.3.4 • Spring Security 6 • JJWT • RESTful APIs', desc: 'Stateless multi-tenant controllers, WebSocket message broker (/topic and /user/queue), and atomic concurrency locks.' },
+      { name: 'DUAL-DATABASE PERSISTENCE STRATEGY', col: C.successGreen, tech: 'MongoDB Atlas Cloud (Distributed NoSQL) + Relational Enterprise Mapping', desc: 'MongoDB Atlas stores high-throughput notifications, pre-approved passes, and audit trails; robust relational schemas for billing.' },
+      { name: 'CLOUD DEPLOYMENT & CI/CD INFRASTRUCTURE', col: C.accentBlue, tech: 'Render Cloud (Dockerized Spring Boot Container) + GitHub Pages (Production PWA)', desc: 'Fully automated continuous deployment with sub-second health monitors (/api/health) and automated failovers.' }
     ];
 
     let tY = 1.25;
     tiers.forEach(t => {
       slide.addShape(pres.ShapeType.rect, {
         x: 0.6, y: tY, w: 5.5, h: 0.86,
-        fill: { color: C.bgCard },
-        line: { color: C.bgCardBorder, width: 1 }
+        fill: { color: C.cardBg },
+        line: { color: C.cardBorder, width: 1 }
+      });
+      slide.addShape(pres.ShapeType.rect, {
+        x: 0.6, y: tY, w: 0.06, h: 0.86,
+        fill: { color: t.col },
+        line: { color: t.col, width: 0 }
       });
 
       slide.addText(t.name, {
@@ -292,11 +323,11 @@ async function createPresentation() {
       });
       slide.addText(t.tech, {
         x: 0.8, y: tY + 0.28, w: 5.1, h: 0.22,
-        fontSize: 10, fontFace: 'Calibri', color: C.textWhite, bold: true
+        fontSize: 10, fontFace: 'Calibri', color: C.textDark, bold: true
       });
       slide.addText(t.desc, {
         x: 0.8, y: tY + 0.48, w: 5.1, h: 0.32,
-        fontSize: 8.5, fontFace: 'Calibri', color: C.textLight
+        fontSize: 8.5, fontFace: 'Calibri', color: C.textBody
       });
 
       tY += 0.96;
@@ -305,13 +336,18 @@ async function createPresentation() {
     // Right Column: Architectural Benchmarks
     slide.addShape(pres.ShapeType.rect, {
       x: 6.35, y: 1.25, w: 3.05, h: 3.8,
-      fill: { color: C.bgCard },
-      line: { color: C.accentCyan, width: 1.5 }
+      fill: { color: C.cardBg },
+      line: { color: C.cardBorder, width: 1 }
+    });
+    slide.addShape(pres.ShapeType.rect, {
+      x: 6.35, y: 1.25, w: 3.05, h: 0.06,
+      fill: { color: C.royalBlue },
+      line: { color: C.royalBlue, width: 0 }
     });
 
     slide.addText('ARCHITECTURAL BENCHMARKS', {
       x: 6.55, y: 1.4, w: 2.65, h: 0.28,
-      fontSize: 11, fontFace: 'Calibri', color: C.accentCyan, bold: true
+      fontSize: 11, fontFace: 'Calibri', color: C.royalBlue, bold: true
     });
 
     const benchmarks = [
@@ -325,11 +361,11 @@ async function createPresentation() {
     benchmarks.forEach(b => {
       slide.addText(b.stat, {
         x: 6.55, y: bY, w: 2.65, h: 0.38,
-        fontSize: 20, fontFace: 'Calibri', color: C.textWhite, bold: true
+        fontSize: 20, fontFace: 'Calibri', color: C.primaryNavy, bold: true
       });
       slide.addText(b.desc, {
         x: 6.55, y: bY + 0.35, w: 2.65, h: 0.25,
-        fontSize: 9.5, fontFace: 'Calibri', color: C.textLight
+        fontSize: 9.5, fontFace: 'Calibri', color: C.textBody
       });
       bY += 0.76;
     });
@@ -459,12 +495,12 @@ async function createPresentation() {
   // ==========================================
   {
     const slide = pres.addSlide();
-    applyColdSlideHeader(slide, '10. Security & Resilience', 'Zero-Trust Security & Offline PWA Architecture', 'Hardened Protection, Multi-Tenant Boundary Isolation, and Continuous Offline Operation', 11);
+    applyHeaderFooter(slide, '10. Security & Resilience', 'Zero-Trust Security & Offline PWA Architecture', 'Hardened Protection, Multi-Tenant Boundary Isolation, and Continuous Offline Operation', 11);
 
     const secBoxes = [
       {
         title: 'ZERO-TRUST JWT SECURITY',
-        col: C.accentCyan,
+        col: C.royalBlue,
         points: [
           '15-Minute rotating JWT access tokens kept in-memory (XSS immune).',
           'Secure HttpOnly SameSite=Strict cookies for refresh tokens.',
@@ -474,7 +510,7 @@ async function createPresentation() {
       },
       {
         title: 'OFFLINE-FIRST PWA RESILIENCE',
-        col: C.accentBlue,
+        col: C.primaryNavy,
         points: [
           'Service Worker precaches assets for 100% offline application startup.',
           'Offline Transaction Queue stores visitor entries in LocalStorage.',
@@ -484,7 +520,7 @@ async function createPresentation() {
       },
       {
         title: 'AUDITING & EMERGENCY SOS',
-        col: C.accentEmerald,
+        col: C.successGreen,
         points: [
           'Immutable audit logging capturing actor ID, IP address, and payload.',
           '2-Second deduplication key window prevents duplicate alert spam.',
@@ -498,8 +534,13 @@ async function createPresentation() {
     secBoxes.forEach(b => {
       slide.addShape(pres.ShapeType.rect, {
         x: sX, y: 1.25, w: 2.75, h: 3.8,
-        fill: { color: C.bgCard },
-        line: { color: b.col, width: 1.5 }
+        fill: { color: C.cardBg },
+        line: { color: C.cardBorder, width: 1 }
+      });
+      slide.addShape(pres.ShapeType.rect, {
+        x: sX, y: 1.25, w: 2.75, h: 0.05,
+        fill: { color: b.col },
+        line: { color: b.col, width: 0 }
       });
 
       slide.addText(b.title, {
@@ -509,7 +550,7 @@ async function createPresentation() {
 
       let pointRuns = [];
       b.points.forEach(pt => {
-        pointRuns.push({ text: `• ${pt}\n\n`, options: { color: C.textLight } });
+        pointRuns.push({ text: `• ${pt}\n\n`, options: { color: C.textBody } });
       });
 
       slide.addText(pointRuns, {
@@ -526,47 +567,52 @@ async function createPresentation() {
   // ==========================================
   {
     const slide = pres.addSlide();
-    slide.background = { color: C.bgDark };
+    slide.background = { color: C.bgLight };
 
     // Decorative top accent line
     slide.addShape(pres.ShapeType.rect, {
       x: 0, y: 0, w: 10, h: 0.08,
-      fill: { color: C.accentCyan },
-      line: { color: C.accentCyan, width: 0 }
+      fill: { color: C.royalBlue },
+      line: { color: C.royalBlue, width: 0 }
     });
 
     // Thank You Title
     slide.addText('THANK YOU', {
       x: 0.6, y: 0.45, w: 8.8, h: 0.7,
-      fontSize: 44, fontFace: 'Calibri', color: C.textWhite, bold: true
+      fontSize: 38, fontFace: 'Calibri', color: C.primaryNavy, bold: true
     });
 
     slide.addText('GateSync — Smart Society Security Platform  |  Evaluation & Discussion', {
       x: 0.6, y: 1.15, w: 8.8, h: 0.3,
-      fontSize: 14, fontFace: 'Calibri', color: C.accentCyan, bold: true
+      fontSize: 14, fontFace: 'Calibri', color: C.royalBlue, bold: true
     });
 
     // Live Deployment Card
     slide.addShape(pres.ShapeType.rect, {
       x: 0.6, y: 1.55, w: 8.8, h: 1.8,
-      fill: { color: C.bgCard },
-      line: { color: C.accentBlue, width: 1.5 }
+      fill: { color: C.cardBg },
+      line: { color: C.cardBorder, width: 1 }
+    });
+    slide.addShape(pres.ShapeType.rect, {
+      x: 0.6, y: 1.55, w: 0.08, h: 1.8,
+      fill: { color: C.royalBlue },
+      line: { color: C.royalBlue, width: 0 }
     });
 
     slide.addText('LIVE DELIVERABLES & PRODUCTION CLOUD ENDPOINTS', {
       x: 0.85, y: 1.7, w: 8.3, h: 0.25,
-      fontSize: 10.5, fontFace: 'Calibri', color: C.accentCyan, bold: true
+      fontSize: 10.5, fontFace: 'Calibri', color: C.royalBlue, bold: true
     });
 
     slide.addText([
-      { text: '•  Live Progressive Web App (PWA):  ', options: { bold: true, color: C.textWhite } },
-      { text: 'https://arpitthakor28.github.io/sms1/  (Installable mobile/desktop frontend)\n', options: { color: C.accentCyan } },
-      { text: '•  Live Cloud Backend API (Render):  ', options: { bold: true, color: C.textWhite } },
-      { text: 'https://sms1-c9sj.onrender.com  (Spring Boot 3 + Java 21 container)\n', options: { color: C.accentCyan } },
-      { text: '•  Cloud Nap Stopper / Health Check:  ', options: { bold: true, color: C.textWhite } },
-      { text: 'https://sms1-c9sj.onrender.com/api/health  (Continuous uptime monitor)\n', options: { color: C.accentCyan } },
-      { text: '•  GitHub Source Code Repository:  ', options: { bold: true, color: C.textWhite } },
-      { text: 'https://github.com/arpitthakor28/sms1  (Full-stack source with reports & slides)', options: { color: C.accentCyan } }
+      { text: '•  Live Progressive Web App (PWA):  ', options: { bold: true, color: C.textDark } },
+      { text: 'https://arpitthakor28.github.io/sms1/  (Installable mobile/desktop frontend)\n', options: { color: C.royalBlue } },
+      { text: '•  Live Cloud Backend API (Render):  ', options: { bold: true, color: C.textDark } },
+      { text: 'https://sms1-c9sj.onrender.com  (Spring Boot 3 + Java 21 container)\n', options: { color: C.royalBlue } },
+      { text: '•  Cloud Nap Stopper / Health Check:  ', options: { bold: true, color: C.textDark } },
+      { text: 'https://sms1-c9sj.onrender.com/api/health  (Continuous uptime monitor)\n', options: { color: C.royalBlue } },
+      { text: '•  GitHub Source Code Repository:  ', options: { bold: true, color: C.textDark } },
+      { text: 'https://github.com/arpitthakor28/sms1  (Full-stack source with reports & slides)', options: { color: C.royalBlue } }
     ], {
       x: 0.85, y: 2.05, w: 8.3, h: 1.15,
       fontSize: 9, fontFace: 'Calibri'
@@ -575,25 +621,30 @@ async function createPresentation() {
     // Student Credentials Card
     slide.addShape(pres.ShapeType.rect, {
       x: 0.6, y: 3.5, w: 8.8, h: 1.45,
-      fill: { color: C.bgCard },
-      line: { color: C.bgCardBorder, width: 1 }
+      fill: { color: C.cardBg },
+      line: { color: C.cardBorder, width: 1 }
+    });
+    slide.addShape(pres.ShapeType.rect, {
+      x: 0.6, y: 3.5, w: 0.08, h: 1.45,
+      fill: { color: C.primaryNavy },
+      line: { color: C.primaryNavy, width: 0 }
     });
 
     slide.addText([
-      { text: 'PROJECT DEVELOPED BY:\n', options: { fontSize: 9, color: C.accentCyan, bold: true } },
-      { text: 'ARPITSINH THAKOR\n', options: { fontSize: 15, color: C.textWhite, bold: true } },
-      { text: 'Enrollment Number: 23SE02IE040\n', options: { fontSize: 12, color: C.accentCyan, bold: true } },
-      { text: 'B.Tech in Information Technology & Engineering\n', options: { fontSize: 10, color: C.textLight } },
-      { text: 'Technology Focus: Full Stack Development - Java', options: { fontSize: 9.5, color: C.accentEmerald, bold: true } }
+      { text: 'PROJECT DEVELOPED BY\n', options: { fontSize: 8.5, color: C.textMuted, bold: true } },
+      { text: 'ARPITSINH THAKOR\n', options: { fontSize: 15, color: C.textDark, bold: true } },
+      { text: 'Enrollment Number: 23SE02IE040\n', options: { fontSize: 12, color: C.royalBlue, bold: true } },
+      { text: 'B.Tech in Information Technology & Engineering\n', options: { fontSize: 10, color: C.textBody } },
+      { text: 'Technology Focus: Full Stack Development - Java', options: { fontSize: 9.5, color: C.successGreen, bold: true } }
     ], {
       x: 0.85, y: 3.65, w: 4.4, h: 1.25, fontFace: 'Calibri'
     });
 
     slide.addText([
-      { text: 'DEPARTMENT & INSTITUTION:\n', options: { fontSize: 9, color: C.accentCyan, bold: true } },
-      { text: 'School of Engineering\n', options: { fontSize: 13, color: C.textWhite, bold: true } },
-      { text: 'P. P. Savani University, Surat, Gujarat\n\n', options: { fontSize: 10, color: C.textLight } },
-      { text: 'Final Year Project  •  Academic Year 2026–2027', options: { fontSize: 11, color: C.accentCyan, bold: true } }
+      { text: 'DEPARTMENT & INSTITUTION\n', options: { fontSize: 8.5, color: C.textMuted, bold: true } },
+      { text: 'School of Engineering\n', options: { fontSize: 13, color: C.textDark, bold: true } },
+      { text: 'P. P. Savani University, Surat, Gujarat\n\n', options: { fontSize: 10, color: C.textBody } },
+      { text: 'Final Year Project  •  Academic Year 2026–2027', options: { fontSize: 11, color: C.royalBlue, bold: true } }
     ], {
       x: 5.4, y: 3.65, w: 3.8, h: 1.25, fontFace: 'Calibri'
     });
@@ -608,7 +659,7 @@ async function createPresentation() {
   // Save the presentation
   const outputPath = path.resolve('GateSync_Project_Presentation.pptx');
   await pres.writeFile({ fileName: outputPath });
-  console.log(`Presentation PPTX generated successfully: ${outputPath}`);
+  console.log(`White Executive Presentation PPTX generated successfully: ${outputPath}`);
 
   // Copy to Downloads, public, and docs
   const dlPath = 'c:\\Users\\ASUS\\Downloads\\GateSync_Project_Presentation.pptx';
@@ -631,7 +682,7 @@ async function createPresentation() {
   }
 }
 
-createPresentation().catch(err => {
+createWhiteExecutivePresentationPPTX().catch(err => {
   console.error('Error generating presentation:', err);
   process.exit(1);
 });
