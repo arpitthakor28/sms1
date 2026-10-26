@@ -4,7 +4,7 @@ import axios from 'axios';
 export const API_BASE = import.meta.env.VITE_API_BASE || 
   (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
     ? 'http://localhost:8080'
-    : 'https://gatesync-backend.onrender.com');
+    : 'https://sms1-c9sj.onrender.com');
 
 // Create Axios client with credentials (sends and receives HttpOnly Secure SameSite cookies)
 const client = axios.create({

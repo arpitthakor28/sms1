@@ -36,7 +36,7 @@ jobs:
       - name: Build Vite PWA
         run: npm run build
         env:
-          VITE_API_BASE: https://gatesync-backend.onrender.com
+          VITE_API_BASE: https://sms1-c9sj.onrender.com
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
