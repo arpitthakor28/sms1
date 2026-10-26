@@ -6,12 +6,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.view.RedirectView;
 
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
 public class HealthController {
-
-    private final Instant startTime = Instant.now();
 
     @GetMapping("/")
     public RedirectView rootRedirect() {
@@ -19,14 +18,12 @@ public class HealthController {
         return new RedirectView("https://arpitthakor28.github.io/sms1/");
     }
 
-    @GetMapping({"/health", "/api/health"})
-    public ResponseEntity<Map<String, Object>> health() {
-        return ResponseEntity.ok(Map.of(
-                "status", "UP",
-                "service", "sms1 Platform API",
-                "version", "2.0.0",
-                "timestamp", Instant.now(),
-                "uptimeSeconds", Instant.now().getEpochSecond() - startTime.getEpochSecond()
-        ));
+    @GetMapping({"/api/health", "/health"})
+    public ResponseEntity<Map<String, Object>> healthCheck() {
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", "OK");
+        response.put("message", "Your API is running");
+        response.put("timestamp", Instant.now().toString());
+        return ResponseEntity.ok(response);
     }
 }
